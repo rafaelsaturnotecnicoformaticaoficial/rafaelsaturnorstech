@@ -36,6 +36,7 @@ const Header = () => {
         <nav className="hidden md:flex items-center gap-6 text-sm text-dark-surface-foreground/80">
           <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
+          <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Blog</a>
           {/* Contato com dropdown */}
           <div className="relative" ref={contatoRef}>
             <button
@@ -122,6 +123,7 @@ const Header = () => {
         <div className="md:hidden bg-dark-surface border-t border-primary/20 px-4 py-4 space-y-3">
           <a href="#servicos" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Serviços</a>
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Vantagens</a>
+          <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Blog</a>
           <p className="text-primary font-semibold text-sm pt-2">Contato</p>
           <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📞 Fale Conosco</a>
           <a href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📢 Canal RS Tech</a>
