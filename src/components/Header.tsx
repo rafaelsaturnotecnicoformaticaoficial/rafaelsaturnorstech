@@ -52,7 +52,7 @@ const Header = () => {
                   className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
                   onClick={() => setContatoOpen(false)}
                 >
-                  📞 Fale Conosco
+                  Fale Conosco
                 </a>
                 <a
                   href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106"
@@ -61,7 +61,7 @@ const Header = () => {
                   className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
                   onClick={() => setContatoOpen(false)}
                 >
-                  📢 Canal RS Tech
+                  Canal RS Tech
                 </a>
               </div>
             )}
@@ -81,10 +81,10 @@ const Header = () => {
                   href="https://abre.bio/magazinerafaelsaturnooficial"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-secondary hover:bg-primary/10 transition-colors"
+                  className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
                   onClick={() => setLojaOpen(false)}
                 >
-                  🛒 Magazine Rafael Saturno
+                  Magazine Rafael Saturno
                 </a>
                 <a
                   href="https://abre.bio/whatsappmagazinerafaelsaturno"
@@ -93,7 +93,7 @@ const Header = () => {
                   className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
                   onClick={() => setLojaOpen(false)}
                 >
-                  📢 Canal Magazine Rafael Saturno
+                  Canal Magazine Rafael Saturno
                 </a>
               </div>
             )}
@@ -125,11 +125,11 @@ const Header = () => {
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Vantagens</a>
           <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Blog</a>
           <p className="text-primary font-semibold text-sm pt-2">Contato</p>
-          <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📞 Fale Conosco</a>
-          <a href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📢 Canal RS Tech</a>
-          <p className="text-secondary font-semibold text-sm pt-2">🛒 Loja</p>
-          <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-secondary">🛒 Magazine Rafael Saturno</a>
-          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📢 Canal Magazine Rafael Saturno</a>
+          <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">Fale Conosco</a>
+          <a href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">Canal RS Tech</a>
+          <p className="text-primary font-semibold text-sm pt-2">Loja</p>
+          <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">Magazine Rafael Saturno</a>
+          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">Canal Magazine Rafael Saturno</a>
         </div>
       )}
     </header>
