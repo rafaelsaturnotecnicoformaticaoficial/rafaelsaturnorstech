@@ -52,7 +52,7 @@ const Header = () => {
                   className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
                   onClick={() => setContatoOpen(false)}
                 >
-                  📞 Fale Conosco
+                  Fale Conosco
                 </a>
                 <a
                   href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106"
