@@ -71,9 +71,9 @@ const Header = () => {
           <div className="relative" ref={lojaRef}>
             <button
               onClick={() => setLojaOpen(!lojaOpen)}
-              className="flex items-center gap-1 hover:text-secondary transition-colors font-semibold"
+              className="flex items-center gap-1 hover:text-primary transition-colors"
             >
-              🛒 Loja <ChevronDown size={14} className={`transition-transform ${lojaOpen ? "rotate-180" : ""}`} />
+              Loja <ChevronDown size={14} className={`transition-transform ${lojaOpen ? "rotate-180" : ""}`} />
             </button>
             {lojaOpen && (
               <div className="absolute top-full right-0 mt-2 w-56 bg-dark-surface border border-primary/20 rounded-lg shadow-lg py-2 z-50">
