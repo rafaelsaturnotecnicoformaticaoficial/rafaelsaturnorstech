@@ -1,9 +1,21 @@
-import { MessageCircle, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { MessageCircle, Menu, X, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [lojaOpen, setLojaOpen] = useState(false);
+  const lojaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (lojaRef.current && !lojaRef.current.contains(e.target as Node)) {
+        setLojaOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-dark-surface/95 backdrop-blur-md border-b border-primary/20">
@@ -21,8 +33,38 @@ const Header = () => {
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
           <a href="#contato" className="hover:text-primary transition-colors">Contato</a>
           <a href="https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">📢 Canal RS Tech</a>
-          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">📢 Canal Magazine</a>
-          <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors font-semibold">🛒 Loja</a>
+
+          {/* Loja com dropdown */}
+          <div className="relative" ref={lojaRef}>
+            <button
+              onClick={() => setLojaOpen(!lojaOpen)}
+              className="flex items-center gap-1 hover:text-secondary transition-colors font-semibold"
+            >
+              🛒 Loja <ChevronDown size={14} className={`transition-transform ${lojaOpen ? "rotate-180" : ""}`} />
+            </button>
+            {lojaOpen && (
+              <div className="absolute top-full right-0 mt-2 w-56 bg-dark-surface border border-primary/20 rounded-lg shadow-lg py-2 z-50">
+                <a
+                  href="https://abre.bio/magazinerafaelsaturnooficial"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-secondary hover:bg-primary/10 transition-colors"
+                  onClick={() => setLojaOpen(false)}
+                >
+                  🛒 Magazine Rafael Saturno
+                </a>
+                <a
+                  href="https://abre.bio/whatsappmagazinerafaelsaturno"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
+                  onClick={() => setLojaOpen(false)}
+                >
+                  📢 Canal Magazine Rafael Saturno
+                </a>
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -50,8 +92,9 @@ const Header = () => {
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Vantagens</a>
           <a href="#contato" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Contato</a>
           <a href="https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">📢 Canal RS Tech</a>
-          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">📢 Canal Magazine</a>
-          <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-secondary font-semibold hover:text-secondary/80">🛒 Loja</a>
+          <p className="text-secondary font-semibold text-sm pt-2">🛒 Loja</p>
+          <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-secondary">🛒 Magazine Rafael Saturno</a>
+          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📢 Canal Magazine Rafael Saturno</a>
         </div>
       )}
     </header>
