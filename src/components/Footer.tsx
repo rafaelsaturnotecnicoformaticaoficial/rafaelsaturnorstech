@@ -26,7 +26,7 @@ const Footer = () => {
           Entre em contato e faça seu orçamento agora!
         </p>
         <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} RS Tech. Todos os direitos reservados.
+          © 2013–{new Date().getFullYear()} Rafael Saturno Técnico Informática ® RS Tech. Todos os direitos reservados.
         </p>
       </div>
     </footer>
