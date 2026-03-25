@@ -5,7 +5,9 @@ import logo from "@/assets/logo.png";
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [lojaOpen, setLojaOpen] = useState(false);
+  const [contatoOpen, setContatoOpen] = useState(false);
   const lojaRef = useRef<HTMLDivElement>(null);
+  const contatoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
