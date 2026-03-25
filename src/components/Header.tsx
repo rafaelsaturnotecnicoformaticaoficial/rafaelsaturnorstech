@@ -122,8 +122,9 @@ const Header = () => {
         <div className="md:hidden bg-dark-surface border-t border-primary/20 px-4 py-4 space-y-3">
           <a href="#servicos" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Serviços</a>
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Vantagens</a>
-          <a href="#contato" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Contato</a>
-          <a href="https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">📢 Canal RS Tech</a>
+          <p className="text-primary font-semibold text-sm pt-2">Contato</p>
+          <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📞 Fale Conosco</a>
+          <a href="https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📢 Canal RS Tech</a>
           <p className="text-secondary font-semibold text-sm pt-2">🛒 Loja</p>
           <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-secondary">🛒 Magazine Rafael Saturno</a>
           <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-dark-surface-foreground/80 hover:text-primary">📢 Canal Magazine Rafael Saturno</a>
