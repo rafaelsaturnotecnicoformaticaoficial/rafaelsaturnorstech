@@ -14,6 +14,9 @@ const Header = () => {
       if (lojaRef.current && !lojaRef.current.contains(e.target as Node)) {
         setLojaOpen(false);
       }
+      if (contatoRef.current && !contatoRef.current.contains(e.target as Node)) {
+        setContatoOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
