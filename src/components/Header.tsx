@@ -84,7 +84,7 @@ const Header = () => {
                   className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
                   onClick={() => setLojaOpen(false)}
                 >
-                  🛒 Magazine Rafael Saturno
+                  Magazine Rafael Saturno
                 </a>
                 <a
                   href="https://abre.bio/whatsappmagazinerafaelsaturno"
