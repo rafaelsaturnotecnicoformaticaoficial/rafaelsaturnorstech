@@ -36,6 +36,7 @@ const Header = () => {
         <nav className="hidden md:flex items-center gap-6 text-sm text-dark-surface-foreground/80">
           <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
+          <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Blog</a>
           {/* Contato com dropdown */}
           <div className="relative" ref={contatoRef}>
             <button
