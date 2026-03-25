@@ -47,6 +47,7 @@ const Header = () => {
           <a href="#servicos" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Serviços</a>
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Vantagens</a>
           <a href="#contato" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Contato</a>
+          <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-secondary font-semibold hover:text-secondary/80">🛒 Loja</a>
         </div>
       )}
     </header>
