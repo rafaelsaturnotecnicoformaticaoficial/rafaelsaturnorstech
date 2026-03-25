@@ -36,8 +36,35 @@ const Header = () => {
         <nav className="hidden md:flex items-center gap-6 text-sm text-dark-surface-foreground/80">
           <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
-          <a href="#contato" className="hover:text-primary transition-colors">Contato</a>
-          <a href="https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">📢 Canal RS Tech</a>
+          {/* Contato com dropdown */}
+          <div className="relative" ref={contatoRef}>
+            <button
+              onClick={() => setContatoOpen(!contatoOpen)}
+              className="flex items-center gap-1 hover:text-primary transition-colors"
+            >
+              Contato <ChevronDown size={14} className={`transition-transform ${contatoOpen ? "rotate-180" : ""}`} />
+            </button>
+            {contatoOpen && (
+              <div className="absolute top-full left-0 mt-2 w-52 bg-dark-surface border border-primary/20 rounded-lg shadow-lg py-2 z-50">
+                <a
+                  href="#contato"
+                  className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
+                  onClick={() => setContatoOpen(false)}
+                >
+                  📞 Fale Conosco
+                </a>
+                <a
+                  href="https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
+                  onClick={() => setContatoOpen(false)}
+                >
+                  📢 Canal RS Tech
+                </a>
+              </div>
+            )}
+          </div>
 
           {/* Loja com dropdown */}
           <div className="relative" ref={lojaRef}>
