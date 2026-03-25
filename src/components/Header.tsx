@@ -20,6 +20,8 @@ const Header = () => {
           <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
           <a href="#contato" className="hover:text-primary transition-colors">Contato</a>
+          <a href="https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">📢 Canal RS Tech</a>
+          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">📢 Canal Magazine</a>
           <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors font-semibold">🛒 Loja</a>
         </nav>
 
@@ -47,6 +49,8 @@ const Header = () => {
           <a href="#servicos" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Serviços</a>
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Vantagens</a>
           <a href="#contato" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">Contato</a>
+          <a href="https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">📢 Canal RS Tech</a>
+          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-dark-surface-foreground/80 hover:text-primary">📢 Canal Magazine</a>
           <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-secondary font-semibold hover:text-secondary/80">🛒 Loja</a>
         </div>
       )}
