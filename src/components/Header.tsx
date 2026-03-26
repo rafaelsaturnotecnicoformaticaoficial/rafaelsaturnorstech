@@ -28,12 +28,12 @@ const Header = () => {
         <div className="flex items-center gap-3">
           <img src={logo} alt="RS Tech Logo" className="h-12 w-12 object-contain" />
           <div className="hidden sm:block">
-            <p className="font-display text-sm font-bold text-dark-surface-foreground">Rafael Saturno</p>
-            <p className="text-xs text-muted-foreground">Técnico em Informática | RS Tech</p>
+            <p className="font-display text-sm font-bold text-black">Rafael Saturno</p>
+            <p className="text-xs text-black/60">Técnico em Informática | RS Tech</p>
           </div>
         </div>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm text-dark-surface-foreground/80">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-black">
           <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
           <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Blog</a>
