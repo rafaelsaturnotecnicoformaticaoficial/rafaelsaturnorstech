@@ -2,9 +2,9 @@ import { MessageCircle } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t border-primary/20 py-8">
+    <footer className="bg-dark-surface border-t border-primary/20 py-8">
       <div className="container mx-auto px-4 text-center space-y-4">
-        <p className="font-display font-bold text-black">
+        <p className="font-display font-bold text-white">
           Rafael Saturno – Técnico em Informática | RS Tech
         </p>
         <a
