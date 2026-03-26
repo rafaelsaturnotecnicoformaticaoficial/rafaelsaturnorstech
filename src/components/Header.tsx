@@ -76,7 +76,7 @@ const Header = () => {
               Loja <ChevronDown size={14} className={`transition-transform ${lojaOpen ? "rotate-180" : ""}`} />
             </button>
             {lojaOpen && (
-              <div className="absolute top-full right-0 mt-2 w-56 bg-dark-surface border border-primary/20 rounded-lg shadow-lg py-2 z-50">
+              <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-primary/20 rounded-lg shadow-lg py-2 z-50">
                 <a
                   href="https://abre.bio/magazinerafaelsaturnooficial"
                   target="_blank"
