@@ -49,7 +49,7 @@ const Header = () => {
               <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-primary/20 rounded-lg shadow-lg py-2 z-50">
                 <a
                   href="#contato"
-                  className="block px-4 py-2 text-dark-surface-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors"
+                  className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors"
                   onClick={() => setContatoOpen(false)}
                 >
                   Fale Conosco
