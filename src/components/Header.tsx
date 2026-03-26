@@ -111,7 +111,7 @@ const Header = () => {
             <span className="hidden sm:inline">Chamar no WhatsApp</span>
           </a>
           <button
-            className="md:hidden text-dark-surface-foreground"
+            className="md:hidden text-black"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
