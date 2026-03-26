@@ -99,3 +99,8 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
   }
 }
+#lovable-badge { 
+  display: none !important; 
+}
+
+}
