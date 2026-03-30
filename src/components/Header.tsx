@@ -78,9 +78,7 @@ const Header = () => {
             {lojaOpen && (
               <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-primary/20 rounded-lg shadow-lg py-2 z-50">
                 <a
-                  href="https://abre.bio/magazinerafaelsaturnooficial"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/loja"
                   className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors"
                   onClick={() => setLojaOpen(false)}
                 >
@@ -128,7 +126,7 @@ const Header = () => {
           <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Fale Conosco</a>
           <a href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Canal RS Tech</a>
           <p className="text-primary font-semibold text-sm pt-2">Loja</p>
-          <a href="https://abre.bio/magazinerafaelsaturnooficial" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Magazine Rafael Saturno</a>
+          <a href="/loja" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Magazine Rafael Saturno</a>
           <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Canal Magazine Rafael Saturno</a>
         </div>
       )}
