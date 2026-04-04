@@ -25,13 +25,13 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-primary/20">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <a href="/" className="flex items-center gap-3">
           <img src={logo} alt="RS Tech Logo" className="h-12 w-12 object-contain" />
           <div className="hidden sm:block">
             <p className="font-display text-sm font-bold text-black">Rafael Saturno</p>
             <p className="text-xs text-black/60">Técnico em Informática | RS Tech</p>
           </div>
-        </div>
+        </a>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-black">
           <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
