@@ -1,5 +1,5 @@
 import { MessageCircle } from "lucide-react";
-
+import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-white border-t border-primary/20 py-8">
