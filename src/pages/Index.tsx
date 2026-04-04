@@ -1,25 +1,30 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import PartnersCarousel from "@/components/PartnersCarousel";
 import Services from "@/components/Services";
 import Advantages from "@/components/Advantages";
 import Payment from "@/components/Payment";
 import FeaturedProducts from "@/components/FeaturedProducts";
+import AffiliateProducts from "@/components/AffiliateProducts";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AdBanner from "@/components/AdBanner";
+import DynamicAdBlock from "@/components/DynamicAdBlock";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Header />
       <Hero />
+      <PartnersCarousel />
       <AdBanner />
       <Services />
-      <AdBanner />
+      <DynamicAdBlock position="after-services" />
       <FeaturedProducts />
+      <AffiliateProducts />
       <AdBanner />
       <Advantages />
-      <AdBanner />
+      <DynamicAdBlock position="after-advantages" />
       <Payment />
       <Contact />
       <Footer />
