@@ -5,7 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import Loja from "./pages/Loja.tsx";
+import PoliticaPrivacidade from "./pages/PoliticaPrivacidade.tsx";
+import TermosDeUso from "./pages/TermosDeUso.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import CookieConsent from "./components/CookieConsent.tsx";
 
 const queryClient = new QueryClient();
 
