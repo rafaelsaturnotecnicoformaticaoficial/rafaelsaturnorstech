@@ -90,6 +90,21 @@ const Admin = () => {
 const PartnersTab = () => {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ name: "", logo_url: "", website_url: "" });
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `partners/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("banners").upload(path, file);
+    if (error) { toast.error("Erro ao enviar imagem"); setUploading(false); return; }
+    const { data: urlData } = supabase.storage.from("banners").getPublicUrl(path);
+    setForm((f) => ({ ...f, logo_url: urlData.publicUrl }));
+    setUploading(false);
+    toast.success("Imagem enviada!");
+  };
 
   const { data: partners } = useQuery({
     queryKey: ["admin_partners"],
