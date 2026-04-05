@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft } from "lucide-react";
+import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload } from "lucide-react";
+import SupportersTab from "@/components/admin/SupportersTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import logo from "@/assets/logo.png";
@@ -70,11 +71,13 @@ const Admin = () => {
         <Tabs defaultValue="partners">
           <TabsList className="mb-6">
             <TabsTrigger value="partners" className="gap-1"><Handshake size={14} /> Parceiros</TabsTrigger>
+            <TabsTrigger value="supporters" className="gap-1"><Heart size={14} /> Apoio e Social</TabsTrigger>
             <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Produtos</TabsTrigger>
             <TabsTrigger value="adsense" className="gap-1"><Code size={14} /> Anúncios</TabsTrigger>
           </TabsList>
 
           <TabsContent value="partners"><PartnersTab /></TabsContent>
+          <TabsContent value="supporters"><SupportersTab /></TabsContent>
           <TabsContent value="products"><ProductsTab /></TabsContent>
           <TabsContent value="adsense"><AdsenseTab /></TabsContent>
         </Tabs>
@@ -87,6 +90,21 @@ const Admin = () => {
 const PartnersTab = () => {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ name: "", logo_url: "", website_url: "" });
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `partners/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("banners").upload(path, file);
+    if (error) { toast.error("Erro ao enviar imagem"); setUploading(false); return; }
+    const { data: urlData } = supabase.storage.from("banners").getPublicUrl(path);
+    setForm((f) => ({ ...f, logo_url: urlData.publicUrl }));
+    setUploading(false);
+    toast.success("Imagem enviada!");
+  };
 
   const { data: partners } = useQuery({
     queryKey: ["admin_partners"],
@@ -150,6 +168,13 @@ const PartnersTab = () => {
           <div>
             <Label>URL do Logo</Label>
             <Input value={form.logo_url} onChange={(e) => setForm({ ...form, logo_url: e.target.value })} placeholder="https://..." />
+            <div className="mt-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-primary hover:underline">
+                <Upload size={14} />
+                {uploading ? "Enviando..." : "Enviar foto"}
+                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
+              </label>
+            </div>
           </div>
           <div>
             <Label>URL do Site</Label>
