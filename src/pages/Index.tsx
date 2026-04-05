@@ -19,12 +19,12 @@ const Index = () => {
       <AdBanner />
       <Services />
       <DynamicAdBlock position="after-services" />
-      <FeaturedProducts />
-      <AffiliateProducts />
       <AdBanner />
       <Advantages />
       <DynamicAdBlock position="after-advantages" />
       <Payment />
+      <FeaturedProducts />
+      <AffiliateProducts />
       <PartnersCarousel />
       <Contact />
       <Footer />
