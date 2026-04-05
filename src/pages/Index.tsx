@@ -16,7 +16,6 @@ const Index = () => {
     <div className="min-h-screen">
       <Header />
       <Hero />
-      <PartnersCarousel />
       <AdBanner />
       <Services />
       <DynamicAdBlock position="after-services" />
@@ -26,6 +25,7 @@ const Index = () => {
       <Advantages />
       <DynamicAdBlock position="after-advantages" />
       <Payment />
+      <PartnersCarousel />
       <Contact />
       <Footer />
     </div>
