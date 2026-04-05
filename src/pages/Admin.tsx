@@ -71,11 +71,13 @@ const Admin = () => {
         <Tabs defaultValue="partners">
           <TabsList className="mb-6">
             <TabsTrigger value="partners" className="gap-1"><Handshake size={14} /> Parceiros</TabsTrigger>
+            <TabsTrigger value="supporters" className="gap-1"><Heart size={14} /> Apoio e Social</TabsTrigger>
             <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Produtos</TabsTrigger>
             <TabsTrigger value="adsense" className="gap-1"><Code size={14} /> Anúncios</TabsTrigger>
           </TabsList>
 
           <TabsContent value="partners"><PartnersTab /></TabsContent>
+          <TabsContent value="supporters"><SupportersTab /></TabsContent>
           <TabsContent value="products"><ProductsTab /></TabsContent>
           <TabsContent value="adsense"><AdsenseTab /></TabsContent>
         </Tabs>
