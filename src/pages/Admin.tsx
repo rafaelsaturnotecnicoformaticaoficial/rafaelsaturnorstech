@@ -168,6 +168,13 @@ const PartnersTab = () => {
           <div>
             <Label>URL do Logo</Label>
             <Input value={form.logo_url} onChange={(e) => setForm({ ...form, logo_url: e.target.value })} placeholder="https://..." />
+            <div className="mt-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-primary hover:underline">
+                <Upload size={14} />
+                {uploading ? "Enviando..." : "Enviar foto"}
+                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
+              </label>
+            </div>
           </div>
           <div>
             <Label>URL do Site</Label>
