@@ -113,6 +113,39 @@ export type Database = {
         }
         Relationships: []
       }
+      supporters: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          logo_url: string
+          name: string
+          sort_order: number
+          updated_at: string
+          website_url: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          logo_url: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+          website_url?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          logo_url?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          website_url?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
