@@ -21,9 +21,61 @@ const paymentPlatforms = [
 
 const availableTimes = ["09:00", "11:00", "13:00", "16:00"];
 
+// Brazilian national holidays (fixed + mobile dates for 2024-2027)
+const getBrazilianHolidays = (): string[] => {
+  const fixed = [
+    // Fixed holidays every year
+    "01-01", // Confraternização Universal
+    "04-21", // Tiradentes
+    "05-01", // Dia do Trabalho
+    "09-07", // Independência do Brasil
+    "10-12", // Nossa Senhora Aparecida
+    "11-02", // Finados
+    "11-15", // Proclamação da República
+    "12-25", // Natal
+  ];
+
+  const years = [2024, 2025, 2026, 2027];
+  const holidays: string[] = [];
+
+  years.forEach((y) => {
+    fixed.forEach((md) => holidays.push(`${y}-${md}`));
+  });
+
+  // Mobile holidays (Carnaval, Sexta-feira Santa, Corpus Christi)
+  const mobileHolidays = [
+    // 2024
+    "2024-02-12", "2024-02-13", // Carnaval
+    "2024-03-29", // Sexta-feira Santa
+    "2024-05-30", // Corpus Christi
+    // 2025
+    "2025-03-03", "2025-03-04", // Carnaval
+    "2025-04-18", // Sexta-feira Santa
+    "2025-06-19", // Corpus Christi
+    // 2026
+    "2026-02-16", "2026-02-17", // Carnaval
+    "2026-04-03", // Sexta-feira Santa
+    "2026-06-04", // Corpus Christi
+    // 2027
+    "2027-02-08", "2027-02-09", // Carnaval
+    "2027-03-26", // Sexta-feira Santa
+    "2027-05-27", // Corpus Christi
+  ];
+
+  holidays.push(...mobileHolidays);
+  return holidays;
+};
+
+const brazilianHolidays = getBrazilianHolidays();
+
+const isHoliday = (date: Date): boolean => {
+  const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  return brazilianHolidays.includes(dateStr);
+};
+
 const isWeekday = (date: Date) => {
   const day = date.getDay();
-  return day >= 1 && day <= 5; // Monday to Friday
+  return day >= 1 && day <= 5;
 };
 
 const RemoteSupport = () => {
