@@ -97,18 +97,39 @@ const RemoteSupport = () => {
 
     setLoading(true);
 
+    const formattedDate = date ? format(date, "dd/MM/yyyy") : "";
+    const deviceLabel = deviceType === "computador" ? "Computador" : "Notebook";
+
     const message = `*Agendamento Suporte Remoto*%0A%0A` +
       `*Nome:* ${encodeURIComponent(name)}%0A` +
       `*Email:* ${encodeURIComponent(email)}%0A` +
       `*Telefone:* ${encodeURIComponent(phone)}%0A` +
-      `*Dispositivo:* ${deviceType === "computador" ? "Computador" : "Notebook"}%0A` +
+      `*Dispositivo:* ${deviceLabel}%0A` +
       `*Problema:* ${encodeURIComponent(problem)}%0A` +
-      (date ? `*Data preferida:* ${format(date, "dd/MM/yyyy")}%0A` : "") +
+      (formattedDate ? `*Data preferida:* ${formattedDate}%0A` : "") +
       (preferredTime ? `*Horário preferido:* ${encodeURIComponent(preferredTime)}` : "");
 
+    // Open WhatsApp
     window.open(`https://wa.me/5535998793630?text=${message}`, "_blank");
 
-    toast.success("Redirecionando para o WhatsApp...");
+    // Send email notification
+    const emailSubject = encodeURIComponent("Novo Agendamento - Suporte Remoto");
+    const emailBody = encodeURIComponent(
+      `Agendamento Suporte Remoto\n\n` +
+      `Nome: ${name}\n` +
+      `Email: ${email}\n` +
+      `Telefone: ${phone}\n` +
+      `Dispositivo: ${deviceLabel}\n` +
+      `Problema: ${problem}\n` +
+      (formattedDate ? `Data preferida: ${formattedDate}\n` : "") +
+      (preferredTime ? `Horário preferido: ${preferredTime}\n` : "")
+    );
+
+    // Open default email client with both recipients
+    const emailRecipients = "rafaelsaturnodepaulaspu@gmail.com,rafaelsaturnotecnicoformatica@gmail.com";
+    window.open(`mailto:${emailRecipients}?subject=${emailSubject}&body=${emailBody}`, "_self");
+
+    toast.success("Redirecionando para o WhatsApp e abrindo email...");
     setLoading(false);
   };
 
