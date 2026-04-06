@@ -208,15 +208,9 @@ const RemoteSupport = () => {
                 {paymentPlatforms.map((p) => (
                   <a
                     key={p.name}
-                    href={p.url || "#"}
-                    target={p.url ? "_blank" : undefined}
+                    href={p.url}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => {
-                      if (!p.url) {
-                        e.preventDefault();
-                        toast.info(`Link de pagamento ${p.name} será configurado em breve.`);
-                      }
-                    }}
                     className={cn(
                       "flex items-center justify-center gap-2 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-colors",
                       p.color
