@@ -6,6 +6,7 @@ import Advantages from "@/components/Advantages";
 import Payment from "@/components/Payment";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import AffiliateProducts from "@/components/AffiliateProducts";
+import RemoteSupport from "@/components/RemoteSupport";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AdBanner from "@/components/AdBanner";
@@ -18,6 +19,7 @@ const Index = () => {
       <Hero />
       <AdBanner />
       <Services />
+      <RemoteSupport />
       <DynamicAdBlock position="after-services" />
       <AdBanner />
       <Advantages />

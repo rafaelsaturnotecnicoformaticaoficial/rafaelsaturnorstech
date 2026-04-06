@@ -35,6 +35,7 @@ const Header = () => {
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-black">
           <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
+          <a href="#suporte-remoto" className="hover:text-primary transition-colors">Suporte Remoto</a>
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
           <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Blog</a>
           {/* Contato com dropdown */}
@@ -120,6 +121,7 @@ const Header = () => {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-primary/20 px-4 py-4 space-y-3">
           <a href="#servicos" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Serviços</a>
+          <a href="#suporte-remoto" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Suporte Remoto</a>
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Vantagens</a>
           <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Blog</a>
           <p className="text-primary font-semibold text-sm pt-2">Contato</p>
