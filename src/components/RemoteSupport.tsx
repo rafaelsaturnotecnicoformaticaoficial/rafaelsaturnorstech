@@ -21,9 +21,61 @@ const paymentPlatforms = [
 
 const availableTimes = ["09:00", "11:00", "13:00", "16:00"];
 
+// Brazilian national holidays (fixed + mobile dates for 2024-2027)
+const getBrazilianHolidays = (): string[] => {
+  const fixed = [
+    // Fixed holidays every year
+    "01-01", // Confraternização Universal
+    "04-21", // Tiradentes
+    "05-01", // Dia do Trabalho
+    "09-07", // Independência do Brasil
+    "10-12", // Nossa Senhora Aparecida
+    "11-02", // Finados
+    "11-15", // Proclamação da República
+    "12-25", // Natal
+  ];
+
+  const years = [2024, 2025, 2026, 2027];
+  const holidays: string[] = [];
+
+  years.forEach((y) => {
+    fixed.forEach((md) => holidays.push(`${y}-${md}`));
+  });
+
+  // Mobile holidays (Carnaval, Sexta-feira Santa, Corpus Christi)
+  const mobileHolidays = [
+    // 2024
+    "2024-02-12", "2024-02-13", // Carnaval
+    "2024-03-29", // Sexta-feira Santa
+    "2024-05-30", // Corpus Christi
+    // 2025
+    "2025-03-03", "2025-03-04", // Carnaval
+    "2025-04-18", // Sexta-feira Santa
+    "2025-06-19", // Corpus Christi
+    // 2026
+    "2026-02-16", "2026-02-17", // Carnaval
+    "2026-04-03", // Sexta-feira Santa
+    "2026-06-04", // Corpus Christi
+    // 2027
+    "2027-02-08", "2027-02-09", // Carnaval
+    "2027-03-26", // Sexta-feira Santa
+    "2027-05-27", // Corpus Christi
+  ];
+
+  holidays.push(...mobileHolidays);
+  return holidays;
+};
+
+const brazilianHolidays = getBrazilianHolidays();
+
+const isHoliday = (date: Date): boolean => {
+  const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  return brazilianHolidays.includes(dateStr);
+};
+
 const isWeekday = (date: Date) => {
   const day = date.getDay();
-  return day >= 1 && day <= 5; // Monday to Friday
+  return day >= 1 && day <= 5;
 };
 
 const RemoteSupport = () => {
@@ -45,18 +97,39 @@ const RemoteSupport = () => {
 
     setLoading(true);
 
+    const formattedDate = date ? format(date, "dd/MM/yyyy") : "";
+    const deviceLabel = deviceType === "computador" ? "Computador" : "Notebook";
+
     const message = `*Agendamento Suporte Remoto*%0A%0A` +
       `*Nome:* ${encodeURIComponent(name)}%0A` +
       `*Email:* ${encodeURIComponent(email)}%0A` +
       `*Telefone:* ${encodeURIComponent(phone)}%0A` +
-      `*Dispositivo:* ${deviceType === "computador" ? "Computador" : "Notebook"}%0A` +
+      `*Dispositivo:* ${deviceLabel}%0A` +
       `*Problema:* ${encodeURIComponent(problem)}%0A` +
-      (date ? `*Data preferida:* ${format(date, "dd/MM/yyyy")}%0A` : "") +
+      (formattedDate ? `*Data preferida:* ${formattedDate}%0A` : "") +
       (preferredTime ? `*Horário preferido:* ${encodeURIComponent(preferredTime)}` : "");
 
+    // Open WhatsApp
     window.open(`https://wa.me/5535998793630?text=${message}`, "_blank");
 
-    toast.success("Redirecionando para o WhatsApp...");
+    // Send email notification
+    const emailSubject = encodeURIComponent("Novo Agendamento - Suporte Remoto");
+    const emailBody = encodeURIComponent(
+      `Agendamento Suporte Remoto\n\n` +
+      `Nome: ${name}\n` +
+      `Email: ${email}\n` +
+      `Telefone: ${phone}\n` +
+      `Dispositivo: ${deviceLabel}\n` +
+      `Problema: ${problem}\n` +
+      (formattedDate ? `Data preferida: ${formattedDate}\n` : "") +
+      (preferredTime ? `Horário preferido: ${preferredTime}\n` : "")
+    );
+
+    // Open default email client with both recipients
+    const emailRecipients = "rafaelsaturnodepaulaspu@gmail.com,rafaelsaturnotecnicoformatica@gmail.com";
+    window.open(`mailto:${emailRecipients}?subject=${emailSubject}&body=${emailBody}`, "_self");
+
+    toast.success("Redirecionando para o WhatsApp e abrindo email...");
     setLoading(false);
   };
 
@@ -135,7 +208,7 @@ const RemoteSupport = () => {
                         disabled={(d) => {
                           const today = new Date();
                           today.setHours(0, 0, 0, 0);
-                          return d < today || !isWeekday(d);
+                          return d < today || !isWeekday(d) || isHoliday(d);
                         }}
                         locale={ptBR}
                         className="p-3 pointer-events-auto"
