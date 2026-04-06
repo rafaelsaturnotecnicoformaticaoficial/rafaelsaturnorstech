@@ -187,7 +187,7 @@ const RemoteSupport = () => {
                         disabled={(d) => {
                           const today = new Date();
                           today.setHours(0, 0, 0, 0);
-                          return d < today || !isWeekday(d);
+                          return d < today || !isWeekday(d) || isHoliday(d);
                         }}
                         locale={ptBR}
                         className="p-3 pointer-events-auto"
