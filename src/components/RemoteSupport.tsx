@@ -13,11 +13,18 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const paymentPlatforms = [
-  { name: "Mercado Pago", color: "bg-blue-500 hover:bg-blue-600", url: "" },
-  { name: "Kiwify", color: "bg-green-500 hover:bg-green-600", url: "" },
-  { name: "Hotmart", color: "bg-orange-500 hover:bg-orange-600", url: "" },
-  { name: "Monetizze", color: "bg-purple-500 hover:bg-purple-600", url: "" },
+  { name: "Mercado Pago", color: "bg-blue-500 hover:bg-blue-600", url: "https://mpago.li/26yCx9t" },
+  { name: "Kiwify", color: "bg-green-500 hover:bg-green-600", url: "https://pay.kiwify.com.br/LIDaekk" },
+  { name: "Hotmart", color: "bg-orange-500 hover:bg-orange-600", url: "https://hotmart.com/pt-br/marketplace/produtos/rafaelsaturnosuporteremoto/M77346974Q" },
+  { name: "Monetizze", color: "bg-purple-500 hover:bg-purple-600", url: "https://pay.monetizze.com.br/DMH175767" },
 ];
+
+const availableTimes = ["09:00", "11:00", "13:00", "16:00"];
+
+const isWeekday = (date: Date) => {
+  const day = date.getDay();
+  return day >= 1 && day <= 5; // Monday to Friday
+};
 
 const RemoteSupport = () => {
   const [name, setName] = useState("");
@@ -125,7 +132,11 @@ const RemoteSupport = () => {
                         mode="single"
                         selected={date}
                         onSelect={setDate}
-                        disabled={(d) => d < new Date()}
+                        disabled={(d) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return d < today || !isWeekday(d);
+                        }}
                         locale={ptBR}
                         className="p-3 pointer-events-auto"
                       />
@@ -133,8 +144,21 @@ const RemoteSupport = () => {
                   </Popover>
                 </div>
                 <div>
-                  <Label htmlFor="rs-time">Horário Preferido</Label>
-                  <Input id="rs-time" type="time" value={preferredTime} onChange={(e) => setPreferredTime(e.target.value)} className="mt-1" />
+                  <Label>Horário</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    {availableTimes.map((time) => (
+                      <Button
+                        key={time}
+                        type="button"
+                        variant={preferredTime === time ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setPreferredTime(time)}
+                        className="text-xs"
+                      >
+                        {time}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -184,15 +208,9 @@ const RemoteSupport = () => {
                 {paymentPlatforms.map((p) => (
                   <a
                     key={p.name}
-                    href={p.url || "#"}
-                    target={p.url ? "_blank" : undefined}
+                    href={p.url}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => {
-                      if (!p.url) {
-                        e.preventDefault();
-                        toast.info(`Link de pagamento ${p.name} será configurado em breve.`);
-                      }
-                    }}
                     className={cn(
                       "flex items-center justify-center gap-2 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-colors",
                       p.color
