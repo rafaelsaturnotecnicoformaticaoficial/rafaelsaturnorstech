@@ -23,7 +23,7 @@ const impressaoServices = [
   { icon: ScanLine, label: "Digitalização" },
   { icon: FileText, label: "Impressão de boletos" },
   { icon: BookOpen, label: "Plastificação e encadernação" },
-  { icon: Palette, label: "Topo de bolo" },
+  { icon: Palette, label: "Topo de bolo (sob agendamento)" },
   { icon: Sticker, label: "Tags, adesivos e tubetes (sob agendamento)" },
   { icon: Palette, label: "Atividades escolares e desenhos para colorir" },
 ];
