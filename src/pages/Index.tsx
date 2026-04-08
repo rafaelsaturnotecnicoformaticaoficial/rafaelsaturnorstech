@@ -4,7 +4,7 @@ import PartnersCarousel from "@/components/PartnersCarousel";
 import Services from "@/components/Services";
 import Advantages from "@/components/Advantages";
 import Payment from "@/components/Payment";
-import FeaturedProducts from "@/components/FeaturedProducts";
+
 import AffiliateProducts from "@/components/AffiliateProducts";
 import RemoteSupport from "@/components/RemoteSupport";
 import Contact from "@/components/Contact";
@@ -25,7 +25,7 @@ const Index = () => {
       <Advantages />
       <DynamicAdBlock position="after-advantages" />
       <Payment />
-      <FeaturedProducts />
+      
       <AffiliateProducts />
       <PartnersCarousel />
       <Contact />
