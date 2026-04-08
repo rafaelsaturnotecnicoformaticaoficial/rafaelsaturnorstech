@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload } from "lucide-react";
+import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload, Pencil } from "lucide-react";
 import SupportersTab from "@/components/admin/SupportersTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
@@ -28,7 +29,6 @@ const Admin = () => {
     const checkAdmin = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/admin/login"); return; }
-
       const { data: roles } = await supabase.from("user_roles").select("role").single();
       if (!roles || roles.role !== "admin") {
         await supabase.auth.signOut();
@@ -91,18 +91,23 @@ const PartnersTab = () => {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ name: "", logo_url: "", website_url: "" });
   const [uploading, setUploading] = useState(false);
+  const [editing, setEditing] = useState<Partner | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", logo_url: "", website_url: "" });
+  const [editUploading, setEditUploading] = useState(false);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isEdit = false) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setUploading(true);
+    const setUpload = isEdit ? setEditUploading : setUploading;
+    setUpload(true);
     const ext = file.name.split(".").pop();
     const path = `partners/${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("banners").upload(path, file);
-    if (error) { toast.error("Erro ao enviar imagem"); setUploading(false); return; }
+    if (error) { toast.error("Erro ao enviar imagem"); setUpload(false); return; }
     const { data: urlData } = supabase.storage.from("banners").getPublicUrl(path);
-    setForm((f) => ({ ...f, logo_url: urlData.publicUrl }));
-    setUploading(false);
+    if (isEdit) setEditForm((f) => ({ ...f, logo_url: urlData.publicUrl }));
+    else setForm((f) => ({ ...f, logo_url: urlData.publicUrl }));
+    setUpload(false);
     toast.success("Imagem enviada!");
   };
 
@@ -117,11 +122,7 @@ const PartnersTab = () => {
 
   const addMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("partners").insert({
-        name: form.name,
-        logo_url: form.logo_url,
-        website_url: form.website_url,
-      });
+      const { error } = await supabase.from("partners").insert({ name: form.name, logo_url: form.logo_url, website_url: form.website_url });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -156,6 +157,26 @@ const PartnersTab = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      if (!editing) return;
+      const { error } = await supabase.from("partners").update({ name: editForm.name, logo_url: editForm.logo_url, website_url: editForm.website_url }).eq("id", editing.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin_partners"] });
+      queryClient.invalidateQueries({ queryKey: ["partners"] });
+      setEditing(null);
+      toast.success("Parceiro atualizado!");
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const openEdit = (p: Partner) => {
+    setEditing(p);
+    setEditForm({ name: p.name, logo_url: p.logo_url, website_url: p.website_url });
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-background rounded-xl border border-border p-6">
@@ -172,7 +193,7 @@ const PartnersTab = () => {
               <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-primary hover:underline">
                 <Upload size={14} />
                 {uploading ? "Enviando..." : "Enviar foto"}
-                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e)} disabled={uploading} />
               </label>
             </div>
           </div>
@@ -198,6 +219,9 @@ const PartnersTab = () => {
                 <p className="text-xs text-muted-foreground truncate">{p.website_url}</p>
               </div>
               <Switch checked={p.active} onCheckedChange={(active) => toggleMutation.mutate({ id: p.id, active })} />
+              <Button variant="ghost" size="icon" onClick={() => openEdit(p)}>
+                <Pencil size={16} className="text-primary" />
+              </Button>
               <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(p.id)}>
                 <Trash2 size={16} className="text-destructive" />
               </Button>
@@ -205,6 +229,28 @@ const PartnersTab = () => {
           ))}
         </div>
       </div>
+
+      <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Editar Parceiro</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div><Label>Nome</Label><Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} /></div>
+            <div>
+              <Label>URL do Logo</Label>
+              <Input value={editForm.logo_url} onChange={(e) => setEditForm({ ...editForm, logo_url: e.target.value })} />
+              <div className="mt-2">
+                <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-primary hover:underline">
+                  <Upload size={14} /> {editUploading ? "Enviando..." : "Enviar nova foto"}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, true)} disabled={editUploading} />
+                </label>
+              </div>
+              {editForm.logo_url && <img src={editForm.logo_url} alt="Preview" className="w-16 h-16 object-contain rounded mt-2" />}
+            </div>
+            <div><Label>URL do Site</Label><Input value={editForm.website_url} onChange={(e) => setEditForm({ ...editForm, website_url: e.target.value })} /></div>
+            <Button onClick={() => updateMutation.mutate()} disabled={!editForm.name || !editForm.logo_url}>Salvar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -213,6 +259,8 @@ const PartnersTab = () => {
 const ProductsTab = () => {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ name: "", image_url: "", affiliate_link: "", description: "" });
+  const [editing, setEditing] = useState<Product | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", image_url: "", affiliate_link: "", description: "" });
 
   const { data: products } = useQuery({
     queryKey: ["admin_products"],
@@ -225,12 +273,7 @@ const ProductsTab = () => {
 
   const addMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("affiliate_products").insert({
-        name: form.name,
-        image_url: form.image_url,
-        affiliate_link: form.affiliate_link,
-        description: form.description || null,
-      });
+      const { error } = await supabase.from("affiliate_products").insert({ name: form.name, image_url: form.image_url, affiliate_link: form.affiliate_link, description: form.description || null });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -265,27 +308,35 @@ const ProductsTab = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      if (!editing) return;
+      const { error } = await supabase.from("affiliate_products").update({ name: editForm.name, image_url: editForm.image_url, affiliate_link: editForm.affiliate_link, description: editForm.description || null }).eq("id", editing.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin_products"] });
+      queryClient.invalidateQueries({ queryKey: ["affiliate_products"] });
+      setEditing(null);
+      toast.success("Produto atualizado!");
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const openEdit = (p: Product) => {
+    setEditing(p);
+    setEditForm({ name: p.name, image_url: p.image_url, affiliate_link: p.affiliate_link, description: p.description || "" });
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-background rounded-xl border border-border p-6">
         <h3 className="font-display font-bold text-lg mb-4">Adicionar Produto com Link de Afiliado</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label>Nome do Produto</Label>
-            <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nome do produto" />
-          </div>
-          <div>
-            <Label>URL da Imagem</Label>
-            <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
-          </div>
-          <div>
-            <Label>Link de Afiliado</Label>
-            <Input value={form.affiliate_link} onChange={(e) => setForm({ ...form, affiliate_link: e.target.value })} placeholder="https://..." />
-          </div>
-          <div>
-            <Label>Descrição (opcional)</Label>
-            <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Breve descrição" />
-          </div>
+          <div><Label>Nome do Produto</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nome do produto" /></div>
+          <div><Label>URL da Imagem</Label><Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." /></div>
+          <div><Label>Link de Afiliado</Label><Input value={form.affiliate_link} onChange={(e) => setForm({ ...form, affiliate_link: e.target.value })} placeholder="https://..." /></div>
+          <div><Label>Descrição (opcional)</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Breve descrição" /></div>
         </div>
         <Button className="mt-4" onClick={() => addMutation.mutate()} disabled={!form.name || !form.image_url || !form.affiliate_link}>
           <Plus size={16} className="mr-1" /> Adicionar
@@ -304,6 +355,9 @@ const ProductsTab = () => {
                 <p className="text-xs text-muted-foreground truncate">{p.description}</p>
               </div>
               <Switch checked={p.active} onCheckedChange={(active) => toggleMutation.mutate({ id: p.id, active })} />
+              <Button variant="ghost" size="icon" onClick={() => openEdit(p)}>
+                <Pencil size={16} className="text-primary" />
+              </Button>
               <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(p.id)}>
                 <Trash2 size={16} className="text-destructive" />
               </Button>
@@ -311,6 +365,21 @@ const ProductsTab = () => {
           ))}
         </div>
       </div>
+
+      <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Editar Produto</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div><Label>Nome</Label><Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} /></div>
+            <div><Label>URL da Imagem</Label><Input value={editForm.image_url} onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })} />
+              {editForm.image_url && <img src={editForm.image_url} alt="Preview" className="w-16 h-16 object-cover rounded mt-2" />}
+            </div>
+            <div><Label>Link de Afiliado</Label><Input value={editForm.affiliate_link} onChange={(e) => setEditForm({ ...editForm, affiliate_link: e.target.value })} /></div>
+            <div><Label>Descrição</Label><Input value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} /></div>
+            <Button onClick={() => updateMutation.mutate()} disabled={!editForm.name || !editForm.image_url || !editForm.affiliate_link}>Salvar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -319,6 +388,8 @@ const ProductsTab = () => {
 const AdsenseTab = () => {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ name: "", ad_code: "", position: "general" });
+  const [editing, setEditing] = useState<AdBlock | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", ad_code: "", position: "general" });
 
   const { data: adBlocks } = useQuery({
     queryKey: ["admin_adsense"],
@@ -331,11 +402,7 @@ const AdsenseTab = () => {
 
   const addMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("adsense_blocks").insert({
-        name: form.name,
-        ad_code: form.ad_code,
-        position: form.position,
-      });
+      const { error } = await supabase.from("adsense_blocks").insert({ name: form.name, ad_code: form.ad_code, position: form.position });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -370,28 +437,36 @@ const AdsenseTab = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      if (!editing) return;
+      const { error } = await supabase.from("adsense_blocks").update({ name: editForm.name, ad_code: editForm.ad_code, position: editForm.position }).eq("id", editing.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin_adsense"] });
+      queryClient.invalidateQueries({ queryKey: ["adsense_blocks"] });
+      setEditing(null);
+      toast.success("Anúncio atualizado!");
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const openEdit = (ad: AdBlock) => {
+    setEditing(ad);
+    setEditForm({ name: ad.name, ad_code: ad.ad_code, position: ad.position });
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-background rounded-xl border border-border p-6">
         <h3 className="font-display font-bold text-lg mb-4">Adicionar Bloco de Anúncio AdSense</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label>Nome do bloco</Label>
-            <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ex: Banner topo" />
-          </div>
-          <div>
-            <Label>Posição</Label>
-            <Input value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} placeholder="general, hero, footer..." />
-          </div>
+          <div><Label>Nome do bloco</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ex: Banner topo" /></div>
+          <div><Label>Posição</Label><Input value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} placeholder="general, hero, footer..." /></div>
           <div className="md:col-span-2">
             <Label>Código HTML do AdSense</Label>
-            <Textarea
-              value={form.ad_code}
-              onChange={(e) => setForm({ ...form, ad_code: e.target.value })}
-              placeholder='Cole aqui o código HTML do anúncio...'
-              rows={6}
-              className="font-mono text-xs"
-            />
+            <Textarea value={form.ad_code} onChange={(e) => setForm({ ...form, ad_code: e.target.value })} placeholder='Cole aqui o código HTML do anúncio...' rows={6} className="font-mono text-xs" />
           </div>
         </div>
         <Button className="mt-4" onClick={() => addMutation.mutate()} disabled={!form.name || !form.ad_code}>
@@ -412,6 +487,9 @@ const AdsenseTab = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Switch checked={ad.active} onCheckedChange={(active) => toggleMutation.mutate({ id: ad.id, active })} />
+                  <Button variant="ghost" size="icon" onClick={() => openEdit(ad)}>
+                    <Pencil size={16} className="text-primary" />
+                  </Button>
                   <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(ad.id)}>
                     <Trash2 size={16} className="text-destructive" />
                   </Button>
@@ -422,6 +500,18 @@ const AdsenseTab = () => {
           ))}
         </div>
       </div>
+
+      <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Editar Anúncio</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div><Label>Nome</Label><Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} /></div>
+            <div><Label>Posição</Label><Input value={editForm.position} onChange={(e) => setEditForm({ ...editForm, position: e.target.value })} /></div>
+            <div><Label>Código HTML</Label><Textarea value={editForm.ad_code} onChange={(e) => setEditForm({ ...editForm, ad_code: e.target.value })} rows={6} className="font-mono text-xs" /></div>
+            <Button onClick={() => updateMutation.mutate()} disabled={!editForm.name || !editForm.ad_code}>Salvar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
