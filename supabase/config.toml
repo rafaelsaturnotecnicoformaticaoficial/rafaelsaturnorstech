@@ -1,1 +1,4 @@
 project_id = "kqwejccislgqahcztvwj"
+
+[functions.get-ads]
+verify_jwt = false
