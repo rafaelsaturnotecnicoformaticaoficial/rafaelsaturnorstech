@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ShopeeProducts from "@/components/ShopeeProducts";
 import { ShoppingBag, ExternalLink, ArrowRight } from "lucide-react";
 
 const categorias = [
@@ -111,6 +112,8 @@ const Loja = () => {
             </div>
           </div>
         </section>
+
+        <ShopeeProducts keyword="informatica" title="Ofertas" />
       </main>
       <Footer />
     </div>
