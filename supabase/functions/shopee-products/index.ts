@@ -23,26 +23,15 @@ Deno.serve(async (req) => {
     if (!APP_ID || !APP_SECRET) throw new Error("SHOPEE_APP_ID/SHOPEE_APP_SECRET not configured");
 
     const url = new URL(req.url);
-    const keyword = url.searchParams.get("keyword") ?? "informatica";
+    const keyword = url.searchParams.get("keyword") ?? "";
     const limit = Number(url.searchParams.get("limit") ?? "20");
+    const page = Number(url.searchParams.get("page") ?? "1");
+    // listType: 0=popular, 2=trending; sortType: 2=relevance/sales
+    const args = keyword
+      ? `keyword:"${keyword.replace(/"/g, '\\"')}", sortType:2, page:${page}, limit:${limit}`
+      : `listType:0, sortType:2, page:${page}, limit:${limit}`;
 
-    const query = `{
-      productOfferV2(keyword: "${keyword.replace(/"/g, '\\"')}", sortType: 2, limit: ${limit}, page: 1) {
-        nodes {
-          itemId
-          productName
-          imageUrl
-          price
-          priceMin
-          priceMax
-          sales
-          shopName
-          ratingStar
-          offerLink
-          productLink
-        }
-      }
-    }`;
+    const query = `{productOfferV2(${args}){nodes{itemId productName imageUrl price priceMin priceMax sales shopName ratingStar offerLink productLink commissionRate}}}`;
 
     const payload = JSON.stringify({ query });
     const timestamp = Math.floor(Date.now() / 1000);
