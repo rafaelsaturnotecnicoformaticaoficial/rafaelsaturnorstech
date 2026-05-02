@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { ExternalLink, Star } from "lucide-react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { ExternalLink, Star, Loader2 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const PAGE_SIZE = 20;
 
 interface ShopeeProduct {
   itemId: string;
@@ -23,17 +24,20 @@ interface ShopeeProductsProps {
 }
 
 const ShopeeProducts = ({ keyword = "informatica", title = "Ofertas Shopee" }: ShopeeProductsProps) => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["shopee-products", keyword],
-    queryFn: async () => {
+    initialPageParam: 1,
+    queryFn: async ({ pageParam = 1 }) => {
       const res = await fetch(
-        `${SUPABASE_URL}/functions/v1/shopee-products?keyword=${encodeURIComponent(keyword)}&limit=12`,
+        `${SUPABASE_URL}/functions/v1/shopee-products?keyword=${encodeURIComponent(keyword)}&limit=${PAGE_SIZE}&page=${pageParam}`,
       );
       if (!res.ok) throw new Error("Erro ao carregar produtos");
       const json = await res.json();
-      return (json.products ?? []) as ShopeeProduct[];
+      return { products: (json.products ?? []) as ShopeeProduct[], page: pageParam as number };
     },
-    staleTime: 1000 * 60 * 30, // 30 min
+    getNextPageParam: (lastPage) =>
+      lastPage.products.length === PAGE_SIZE ? lastPage.page + 1 : undefined,
+    staleTime: 1000 * 60 * 30,
   });
 
   if (isLoading) {
@@ -44,7 +48,8 @@ const ShopeeProducts = ({ keyword = "informatica", title = "Ofertas Shopee" }: S
     );
   }
 
-  if (error || !data || data.length === 0) return null;
+  const products = data?.pages.flatMap((p) => p.products) ?? [];
+  if (error || products.length === 0) return null;
 
   const formatPrice = (p: string) => {
     const n = Number(p);
@@ -58,9 +63,11 @@ const ShopeeProducts = ({ keyword = "informatica", title = "Ofertas Shopee" }: S
         <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground text-center mb-2">
           {title} <span className="text-primary">Shopee</span>
         </h2>
-        <p className="text-muted-foreground text-center mb-8">Produtos selecionados com preços especiais</p>
+        <p className="text-muted-foreground text-center mb-8">
+          {products.length} produtos encontrados
+        </p>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {data.map((p) => (
+          {products.map((p) => (
             <a
               key={p.itemId}
               href={p.offerLink || p.productLink}
@@ -95,6 +102,25 @@ const ShopeeProducts = ({ keyword = "informatica", title = "Ofertas Shopee" }: S
             </a>
           ))}
         </div>
+
+        {hasNextPage && (
+          <div className="text-center mt-10">
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground px-8 py-3 rounded-lg font-bold transition-colors"
+            >
+              {isFetchingNextPage ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Carregando...
+                </>
+              ) : (
+                "Carregar mais produtos"
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
