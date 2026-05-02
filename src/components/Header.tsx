@@ -86,6 +86,13 @@ const Header = () => {
                   Magazine Rafael Saturno
                 </a>
                 <a
+                  href="/shopee"
+                  className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors"
+                  onClick={() => setLojaOpen(false)}
+                >
+                  Shopee Rafael Saturno
+                </a>
+                <a
                   href="https://abre.bio/whatsappmagazinerafaelsaturno"
                   target="_blank"
                   rel="noopener noreferrer"
