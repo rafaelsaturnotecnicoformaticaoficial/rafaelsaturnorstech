@@ -48,9 +48,9 @@ const Shopee = () => {
           </div>
         </div>
 
-        <AdBanner />
+        <AdBanner variant="leaderboard" />
         <ShopeeProducts keyword={keyword} title={`Resultados para "${keyword}"`} />
-        <AdBanner />
+        <AdBanner variant="in-article" format="fluid" />
       </main>
       <Footer />
     </div>
