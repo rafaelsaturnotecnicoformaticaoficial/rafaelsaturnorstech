@@ -68,7 +68,7 @@ const Loja = () => {
           </div>
         </div>
 
-        <AdBanner />
+        <AdBanner variant="leaderboard" />
 
         {/* Categorias */}
         <section className="py-14 bg-background">
@@ -115,7 +115,7 @@ const Loja = () => {
           </div>
         </section>
 
-        <AdBanner />
+        <AdBanner variant="in-article" format="fluid" />
       </main>
       <Footer />
     </div>
