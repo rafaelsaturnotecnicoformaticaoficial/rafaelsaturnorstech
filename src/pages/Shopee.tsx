@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShopeeProducts from "@/components/ShopeeProducts";
+import AdBanner from "@/components/AdBanner";
 import { ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
@@ -47,7 +48,9 @@ const Shopee = () => {
           </div>
         </div>
 
+        <AdBanner />
         <ShopeeProducts keyword={keyword} title={`Resultados para "${keyword}"`} />
+        <AdBanner />
       </main>
       <Footer />
     </div>
