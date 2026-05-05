@@ -37,7 +37,7 @@ const Header = () => {
           <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
           <a href="#suporte-remoto" className="hover:text-primary transition-colors">Suporte Remoto</a>
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
-          <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Blog</a>
+          <a href="/blog" className="hover:text-primary transition-colors">Blog</a>
           {/* Contato com dropdown */}
           <div className="relative" ref={contatoRef}>
             <button
@@ -130,7 +130,7 @@ const Header = () => {
           <a href="#servicos" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Serviços</a>
           <a href="#suporte-remoto" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Suporte Remoto</a>
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Vantagens</a>
-          <a href="https://www.rafaelsaturno.com/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Blog</a>
+          <a href="/blog" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Blog</a>
           <p className="text-primary font-semibold text-sm pt-2">Contato</p>
           <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Fale Conosco</a>
           <a href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Canal RS Tech</a>
