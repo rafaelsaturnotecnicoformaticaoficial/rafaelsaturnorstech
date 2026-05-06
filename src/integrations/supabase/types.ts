@@ -44,6 +44,68 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_commissions: {
+        Row: {
+          affiliate_contact: string | null
+          affiliate_name: string
+          affiliate_signup_id: string | null
+          client_name: string
+          commission_percent: number
+          commission_value: number
+          created_at: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          payment_status: string
+          service_status: string
+          service_type: string
+          service_value: number
+          updated_at: string
+        }
+        Insert: {
+          affiliate_contact?: string | null
+          affiliate_name: string
+          affiliate_signup_id?: string | null
+          client_name: string
+          commission_percent?: number
+          commission_value?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_status?: string
+          service_status?: string
+          service_type?: string
+          service_value?: number
+          updated_at?: string
+        }
+        Update: {
+          affiliate_contact?: string | null
+          affiliate_name?: string
+          affiliate_signup_id?: string | null
+          client_name?: string
+          commission_percent?: number
+          commission_value?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_status?: string
+          service_status?: string
+          service_type?: string
+          service_value?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_commissions_affiliate_signup_id_fkey"
+            columns: ["affiliate_signup_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_signups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_products: {
         Row: {
           active: boolean
