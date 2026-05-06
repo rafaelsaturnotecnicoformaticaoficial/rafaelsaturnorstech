@@ -9,8 +9,10 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload, Pencil } from "lucide-react";
+import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload, Pencil, Users, DollarSign } from "lucide-react";
 import SupportersTab from "@/components/admin/SupportersTab";
+import AffiliateSignupsTab from "@/components/admin/AffiliateSignupsTab";
+import CommissionsTab from "@/components/admin/CommissionsTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import logo from "@/assets/logo.png";
@@ -74,12 +76,16 @@ const Admin = () => {
             <TabsTrigger value="supporters" className="gap-1"><Heart size={14} /> Apoio e Social</TabsTrigger>
             <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Produtos</TabsTrigger>
             <TabsTrigger value="adsense" className="gap-1"><Code size={14} /> Anúncios</TabsTrigger>
+            <TabsTrigger value="affiliates" className="gap-1"><Users size={14} /> Afiliados</TabsTrigger>
+            <TabsTrigger value="commissions" className="gap-1"><DollarSign size={14} /> Comissões</TabsTrigger>
           </TabsList>
 
           <TabsContent value="partners"><PartnersTab /></TabsContent>
           <TabsContent value="supporters"><SupportersTab /></TabsContent>
           <TabsContent value="products"><ProductsTab /></TabsContent>
           <TabsContent value="adsense"><AdsenseTab /></TabsContent>
+          <TabsContent value="affiliates"><AffiliateSignupsTab /></TabsContent>
+          <TabsContent value="commissions"><CommissionsTab /></TabsContent>
         </Tabs>
       </div>
     </div>
