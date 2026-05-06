@@ -80,6 +80,45 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_signups: {
+        Row: {
+          channel: string | null
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          status: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          channel?: string | null
+          city?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp: string
+        }
+        Update: {
+          channel?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           active: boolean
