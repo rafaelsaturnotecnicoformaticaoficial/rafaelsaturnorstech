@@ -1,41 +1,8 @@
-import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
 import { Wrench, Printer, Users, Award, CheckCircle2, MessageCircle, AlertTriangle, Banknote } from "lucide-react";
 
 const Afiliados = () => {
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    whatsapp: "",
-    city: "",
-    channel: "",
-    notes: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name || !form.email || !form.whatsapp) {
-      toast({ title: "Preencha os campos obrigatórios", variant: "destructive" });
-      return;
-    }
-    setLoading(true);
-    const { error } = await supabase.from("affiliate_signups").insert([form]);
-    setLoading(false);
-    if (error) {
-      toast({ title: "Erro ao enviar", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "Cadastro enviado!", description: "Em breve entraremos em contato." });
-    setForm({ name: "", email: "", whatsapp: "", city: "", channel: "", notes: "" });
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
