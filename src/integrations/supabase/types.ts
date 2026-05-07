@@ -44,11 +44,39 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_codes: {
+        Row: {
+          clicks: number
+          code: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          clicks?: number
+          code: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          clicks?: number
+          code?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       affiliate_commissions: {
         Row: {
           affiliate_contact: string | null
           affiliate_name: string
           affiliate_signup_id: string | null
+          affiliate_user_id: string | null
           client_name: string
           commission_percent: number
           commission_value: number
@@ -66,6 +94,7 @@ export type Database = {
           affiliate_contact?: string | null
           affiliate_name: string
           affiliate_signup_id?: string | null
+          affiliate_user_id?: string | null
           client_name: string
           commission_percent?: number
           commission_value?: number
@@ -83,6 +112,7 @@ export type Database = {
           affiliate_contact?: string | null
           affiliate_name?: string
           affiliate_signup_id?: string | null
+          affiliate_user_id?: string | null
           client_name?: string
           commission_percent?: number
           commission_value?: number
@@ -181,6 +211,39 @@ export type Database = {
         }
         Relationships: []
       }
+      loyalty_services: {
+        Row: {
+          client_user_id: string
+          created_at: string
+          description: string | null
+          id: string
+          service_date: string
+          service_type: string
+          service_value: number
+          updated_at: string
+        }
+        Insert: {
+          client_user_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          service_date?: string
+          service_type?: string
+          service_value?: number
+          updated_at?: string
+        }
+        Update: {
+          client_user_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          service_date?: string
+          service_type?: string
+          service_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           active: boolean
@@ -211,6 +274,45 @@ export type Database = {
           sort_order?: number
           updated_at?: string
           website_url?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          is_affiliate: boolean
+          is_loyalty_member: boolean
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_affiliate?: boolean
+          is_loyalty_member?: boolean
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_affiliate?: boolean
+          is_loyalty_member?: boolean
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
         }
         Relationships: []
       }
@@ -277,6 +379,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_affiliate_click: { Args: { _code: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"
