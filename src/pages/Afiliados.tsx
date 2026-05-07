@@ -1,41 +1,8 @@
-import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
 import { Wrench, Printer, Users, Award, CheckCircle2, MessageCircle, AlertTriangle, Banknote } from "lucide-react";
 
 const Afiliados = () => {
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    whatsapp: "",
-    city: "",
-    channel: "",
-    notes: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name || !form.email || !form.whatsapp) {
-      toast({ title: "Preencha os campos obrigatórios", variant: "destructive" });
-      return;
-    }
-    setLoading(true);
-    const { error } = await supabase.from("affiliate_signups").insert([form]);
-    setLoading(false);
-    if (error) {
-      toast({ title: "Erro ao enviar", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "Cadastro enviado!", description: "Em breve entraremos em contato." });
-    setForm({ name: "", email: "", whatsapp: "", city: "", channel: "", notes: "" });
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -169,67 +136,30 @@ const Afiliados = () => {
           </div>
         </section>
 
-        {/* Formulário */}
+        {/* CTA cadastro com login */}
         <section className="py-14">
-          <div className="container mx-auto px-4 max-w-2xl">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground text-center mb-2">
+          <div className="container mx-auto px-4 max-w-3xl text-center">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-3">
               Quero participar
             </h2>
-            <p className="text-center text-muted-foreground mb-8">
-              Preencha o formulário e entraremos em contato em até 24h.
+            <p className="text-muted-foreground mb-8">
+              Cadastre-se gratuitamente, gere seu link de indicação e acompanhe suas comissões e descontos fidelidade no painel exclusivo.
             </p>
-            <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 space-y-4 shadow-sm">
-              <div className="grid md:grid-cols-2 gap-4">
-                <input
-                  name="name" value={form.name} onChange={handleChange} placeholder="Nome completo *"
-                  className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary"
-                  required
-                />
-                <input
-                  name="email" type="email" value={form.email} onChange={handleChange} placeholder="E-mail *"
-                  className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary"
-                  required
-                />
-                <input
-                  name="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="WhatsApp *"
-                  className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary"
-                  required
-                />
-                <input
-                  name="city" value={form.city} onChange={handleChange} placeholder="Cidade / UF"
-                  className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary"
-                />
-              </div>
-              <input
-                name="channel" value={form.channel} onChange={handleChange}
-                placeholder="Como pretende divulgar? (Instagram, WhatsApp, blog...)"
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary"
-              />
-              <textarea
-                name="notes" value={form.notes} onChange={handleChange} rows={3}
-                placeholder="Observações (opcional)"
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary resize-none"
-              />
-              <button
-                type="submit" disabled={loading}
-                className="w-full bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground font-bold py-3 rounded-lg transition-colors"
-              >
-                {loading ? "Enviando..." : "Quero participar do Programa RS TECH"}
-              </button>
-              <p className="text-xs text-muted-foreground text-center">
-                Ao enviar, você concorda com nossa Política de Privacidade.
-              </p>
-            </form>
-
-            <div className="text-center mt-8">
-              <a
-                href="https://wa.me/5535998793630?text=Ol%C3%A1%2C%20quero%20participar%20do%20Programa%20Fidelidade%20e%20Indica%C3%A7%C3%A3o%20RS%20TECH"
-                target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
-                <MessageCircle size={20} /> Falar direto no WhatsApp
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
+              <a href="/auth?mode=signup" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 px-6 rounded-lg transition-colors">
+                Criar conta grátis
+              </a>
+              <a href="/auth" className="bg-card border border-border hover:border-primary text-foreground font-bold py-3 px-6 rounded-lg transition-colors">
+                Já tenho conta — Entrar
               </a>
             </div>
+            <a
+              href="https://wa.me/5535998793630?text=Ol%C3%A1%2C%20quero%20participar%20do%20Programa%20Fidelidade%20e%20Indica%C3%A7%C3%A3o%20RS%20TECH"
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
+              <MessageCircle size={20} /> Falar direto no WhatsApp
+            </a>
           </div>
         </section>
       </main>

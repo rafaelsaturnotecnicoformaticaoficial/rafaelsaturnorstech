@@ -8,6 +8,9 @@ import Loja from "./pages/Loja.tsx";
 import Shopee from "./pages/Shopee.tsx";
 import Blog from "./pages/Blog.tsx";
 import Afiliados from "./pages/Afiliados.tsx";
+import Auth from "./pages/Auth.tsx";
+import Portal from "./pages/Portal.tsx";
+import Referral from "./pages/Referral.tsx";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade.tsx";
 import TermosDeUso from "./pages/TermosDeUso.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
@@ -29,6 +32,9 @@ const App = () => (
           <Route path="/shopee" element={<Shopee />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/afiliados" element={<Afiliados />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/portal" element={<Portal />} />
+          <Route path="/r/:code" element={<Referral />} />
           <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
           <Route path="/termos-de-uso" element={<TermosDeUso />} />
           <Route path="/admin/login" element={<AdminLogin />} />
