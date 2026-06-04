@@ -33,6 +33,7 @@ const statusBadge = (status: string, type: "service" | "payment") => {
 const CommissionsTab = () => {
   const qc = useQueryClient();
   const [form, setForm] = useState({
+    affiliate_user_id: "",
     affiliate_name: "",
     affiliate_contact: "",
     client_name: "",
@@ -40,6 +41,34 @@ const CommissionsTab = () => {
     service_value: "",
     notes: "",
   });
+
+  const { data: affiliates } = useQuery({
+    queryKey: ["admin_affiliates_list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id, full_name, email, whatsapp")
+        .eq("is_affiliate", true)
+        .order("full_name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const selectAffiliate = (user_id: string) => {
+    if (user_id === "__manual__") {
+      setForm({ ...form, affiliate_user_id: "", affiliate_name: "", affiliate_contact: "" });
+      return;
+    }
+    const a = affiliates?.find((x) => x.user_id === user_id);
+    if (!a) return;
+    setForm({
+      ...form,
+      affiliate_user_id: user_id,
+      affiliate_name: a.full_name || a.email || "",
+      affiliate_contact: a.whatsapp || "",
+    });
+  };
 
   const { data: commissions } = useQuery({
     queryKey: ["admin_commissions"],
