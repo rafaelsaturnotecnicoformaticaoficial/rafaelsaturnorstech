@@ -21,7 +21,10 @@ const Auth = () => {
     password: "",
     full_name: "",
     whatsapp: "",
+    phone: "",
+    address: "",
     city: "",
+    state: "",
     is_affiliate: true,
     is_loyalty_member: true,
   });
