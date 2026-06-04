@@ -38,7 +38,7 @@ const DynamicAdBlock = ({ position = "general" }: DynamicAdBlockProps) => {
       <iframe
         title="Anúncio"
         srcDoc={srcDoc}
-        sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+        sandbox="allow-scripts allow-popups"
         className="w-full max-w-4xl border-0"
         style={{ minHeight: 100 }}
       />

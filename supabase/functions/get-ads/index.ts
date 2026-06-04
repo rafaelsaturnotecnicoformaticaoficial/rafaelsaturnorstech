@@ -33,8 +33,8 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    return new Response(JSON.stringify({ error: message }), {
+    console.error("get-ads error:", err);
+    return new Response(JSON.stringify({ error: "Failed to fetch ads" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
