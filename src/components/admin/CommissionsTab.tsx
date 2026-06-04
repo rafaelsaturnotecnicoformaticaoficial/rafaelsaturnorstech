@@ -168,6 +168,20 @@ const CommissionsTab = () => {
       {/* Form */}
       <div className="bg-background rounded-xl border border-border p-6">
         <h3 className="font-display font-bold text-lg mb-4">Registrar Indicação / Comissão</h3>
+        <div className="mb-4">
+          <Label>Selecionar Afiliado Cadastrado</Label>
+          <Select value={form.affiliate_user_id || "__manual__"} onValueChange={selectAffiliate}>
+            <SelectTrigger><SelectValue placeholder="Escolha um afiliado..." /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__manual__">— Digitar manualmente —</SelectItem>
+              {affiliates?.map((a) => (
+                <SelectItem key={a.user_id} value={a.user_id}>
+                  {a.full_name || a.email} {a.whatsapp ? `· ${a.whatsapp}` : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label>Nome do Afiliado</Label>
