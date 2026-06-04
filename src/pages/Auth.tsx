@@ -21,7 +21,10 @@ const Auth = () => {
     password: "",
     full_name: "",
     whatsapp: "",
+    phone: "",
+    address: "",
     city: "",
+    state: "",
     is_affiliate: true,
     is_loyalty_member: true,
   });
@@ -64,13 +67,16 @@ const Auth = () => {
       return toast.error(error.message);
     }
     if (data.user) {
-      // Update profile flags + city
+      // Update profile flags + extra fields
       await supabase
         .from("profiles")
         .update({
           full_name: form.full_name,
           whatsapp: form.whatsapp,
+          phone: form.phone,
+          address: form.address,
           city: form.city,
+          state: form.state,
           is_affiliate: form.is_affiliate,
           is_loyalty_member: form.is_loyalty_member,
         })
@@ -159,8 +165,22 @@ const Auth = () => {
                   <Input required value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} />
                 </div>
                 <div>
-                  <Label>Cidade</Label>
-                  <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                  <Label>Telefone</Label>
+                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Endereço *</Label>
+                  <Input required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label>Cidade *</Label>
+                    <Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Estado *</Label>
+                    <Input required maxLength={2} placeholder="SP" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value.toUpperCase() })} />
+                  </div>
                 </div>
                 <div>
                   <Label>E-mail *</Label>

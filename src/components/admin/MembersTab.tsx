@@ -55,7 +55,9 @@ const MembersTab = () => {
         </div>
         <div className="text-sm text-foreground/90 grid sm:grid-cols-2 gap-1">
           {p.email && <p><Mail size={12} className="inline mr-1" />{p.email}</p>}
-          {p.whatsapp && <p><MessageCircle size={12} className="inline mr-1" />{p.whatsapp}</p>}
+          {p.whatsapp && <p><MessageCircle size={12} className="inline mr-1" />WhatsApp: {p.whatsapp}</p>}
+          {(p as any).phone && <p>Tel: {(p as any).phone}</p>}
+          {(p as any).address && <p className="sm:col-span-2">End: {(p as any).address}{p.city && `, ${p.city}`}{(p as any).state && ` - ${(p as any).state}`}</p>}
         </div>
         {badge === "afiliado" && code && (
           <p className="text-xs text-muted-foreground">
