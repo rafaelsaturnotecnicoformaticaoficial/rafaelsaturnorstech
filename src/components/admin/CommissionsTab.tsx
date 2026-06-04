@@ -33,6 +33,7 @@ const statusBadge = (status: string, type: "service" | "payment") => {
 const CommissionsTab = () => {
   const qc = useQueryClient();
   const [form, setForm] = useState({
+    affiliate_user_id: "",
     affiliate_name: "",
     affiliate_contact: "",
     client_name: "",
@@ -40,6 +41,34 @@ const CommissionsTab = () => {
     service_value: "",
     notes: "",
   });
+
+  const { data: affiliates } = useQuery({
+    queryKey: ["admin_affiliates_list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id, full_name, email, whatsapp")
+        .eq("is_affiliate", true)
+        .order("full_name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const selectAffiliate = (user_id: string) => {
+    if (user_id === "__manual__") {
+      setForm({ ...form, affiliate_user_id: "", affiliate_name: "", affiliate_contact: "" });
+      return;
+    }
+    const a = affiliates?.find((x) => x.user_id === user_id);
+    if (!a) return;
+    setForm({
+      ...form,
+      affiliate_user_id: user_id,
+      affiliate_name: a.full_name || a.email || "",
+      affiliate_contact: a.whatsapp || "",
+    });
+  };
 
   const { data: commissions } = useQuery({
     queryKey: ["admin_commissions"],
@@ -65,6 +94,7 @@ const CommissionsTab = () => {
       const percent = SERVICE_PERCENT[form.service_type] || 10;
       const commission_value = +(value * percent / 100).toFixed(2);
       const { error } = await supabase.from("affiliate_commissions").insert({
+        affiliate_user_id: form.affiliate_user_id || null,
         affiliate_name: form.affiliate_name,
         affiliate_contact: form.affiliate_contact || null,
         client_name: form.client_name,
@@ -78,7 +108,7 @@ const CommissionsTab = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin_commissions"] });
-      setForm({ affiliate_name: "", affiliate_contact: "", client_name: "", service_type: "informatica", service_value: "", notes: "" });
+      setForm({ affiliate_user_id: "", affiliate_name: "", affiliate_contact: "", client_name: "", service_type: "informatica", service_value: "", notes: "" });
       toast.success("Comissão registrada!");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -138,6 +168,20 @@ const CommissionsTab = () => {
       {/* Form */}
       <div className="bg-background rounded-xl border border-border p-6">
         <h3 className="font-display font-bold text-lg mb-4">Registrar Indicação / Comissão</h3>
+        <div className="mb-4">
+          <Label>Selecionar Afiliado Cadastrado</Label>
+          <Select value={form.affiliate_user_id || "__manual__"} onValueChange={selectAffiliate}>
+            <SelectTrigger><SelectValue placeholder="Escolha um afiliado..." /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__manual__">— Digitar manualmente —</SelectItem>
+              {affiliates?.map((a) => (
+                <SelectItem key={a.user_id} value={a.user_id}>
+                  {a.full_name || a.email} {a.whatsapp ? `· ${a.whatsapp}` : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label>Nome do Afiliado</Label>
