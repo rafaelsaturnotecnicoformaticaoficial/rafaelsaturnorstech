@@ -133,7 +133,8 @@ const Auth = () => {
       }
     }
     setLoading(false);
-    toast.success("Conta criada! Faça login para acessar o painel.");
+    toast.success("Conta criada! Abrindo WhatsApp com seu pedido...");
+    sendBudgetToWhatsApp();
     setTab("login");
   };
 
