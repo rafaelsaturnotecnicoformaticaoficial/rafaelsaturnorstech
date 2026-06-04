@@ -279,6 +279,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
           city: string | null
           created_at: string
           email: string | null
@@ -286,11 +287,14 @@ export type Database = {
           id: string
           is_affiliate: boolean
           is_loyalty_member: boolean
+          phone: string | null
+          state: string | null
           updated_at: string
           user_id: string
           whatsapp: string | null
         }
         Insert: {
+          address?: string | null
           city?: string | null
           created_at?: string
           email?: string | null
@@ -298,11 +302,14 @@ export type Database = {
           id?: string
           is_affiliate?: boolean
           is_loyalty_member?: boolean
+          phone?: string | null
+          state?: string | null
           updated_at?: string
           user_id: string
           whatsapp?: string | null
         }
         Update: {
+          address?: string | null
           city?: string | null
           created_at?: string
           email?: string | null
@@ -310,6 +317,8 @@ export type Database = {
           id?: string
           is_affiliate?: boolean
           is_loyalty_member?: boolean
+          phone?: string | null
+          state?: string | null
           updated_at?: string
           user_id?: string
           whatsapp?: string | null
