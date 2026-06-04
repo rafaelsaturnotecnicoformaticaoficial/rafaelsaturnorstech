@@ -165,8 +165,22 @@ const Auth = () => {
                   <Input required value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} />
                 </div>
                 <div>
-                  <Label>Cidade</Label>
-                  <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                  <Label>Telefone</Label>
+                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Endereço *</Label>
+                  <Input required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label>Cidade *</Label>
+                    <Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Estado *</Label>
+                    <Input required maxLength={2} placeholder="SP" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value.toUpperCase() })} />
+                  </div>
                 </div>
                 <div>
                   <Label>E-mail *</Label>
