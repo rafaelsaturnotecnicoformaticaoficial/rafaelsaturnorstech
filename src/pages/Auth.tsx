@@ -27,7 +27,45 @@ const Auth = () => {
     state: "",
     is_affiliate: true,
     is_loyalty_member: true,
+    message: "",
   });
+  const SERVICE_OPTIONS = [
+    "Formatação de Computador",
+    "Manutenção / Conserto",
+    "Instalação de Programas",
+    "Remoção de Vírus",
+    "Recuperação de Dados",
+    "Recarga de Cartucho / Toner",
+    "Impressão / Cópias / Digitalização",
+    "Suporte Remoto",
+    "Montagem de PC",
+    "Outros",
+  ];
+  const [services, setServices] = useState<string[]>([]);
+  const toggleService = (s: string) =>
+    setServices((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
+
+  const BUSINESS_WHATSAPP = "5535998793630";
+  const sendBudgetToWhatsApp = () => {
+    const lines = [
+      "*Novo cadastro - Pedido de Orçamento (RS Tech)*",
+      "",
+      `*Nome:* ${form.full_name}`,
+      `*WhatsApp:* ${form.whatsapp}`,
+      form.phone ? `*Telefone:* ${form.phone}` : "",
+      `*Endereço:* ${form.address}`,
+      `*Cidade/UF:* ${form.city} - ${form.state}`,
+      `*E-mail:* ${form.email}`,
+      "",
+      `*Programas:* ${[form.is_affiliate ? "Afiliado" : "", form.is_loyalty_member ? "Fidelidade" : ""].filter(Boolean).join(", ") || "Nenhum"}`,
+      "",
+      "*Serviços desejados:*",
+      services.length ? services.map((s) => `- ${s}`).join("\n") : "- (não selecionado)",
+      form.message ? `\n*Mensagem:*\n${form.message}` : "",
+    ].filter(Boolean);
+    const text = encodeURIComponent(lines.join("\n"));
+    window.open(`https://wa.me/${BUSINESS_WHATSAPP}?text=${text}`, "_blank");
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
