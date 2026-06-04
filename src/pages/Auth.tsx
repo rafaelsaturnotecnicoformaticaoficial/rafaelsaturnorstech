@@ -247,8 +247,40 @@ const Auth = () => {
                     Quero participar do Programa Fidelidade
                   </label>
                 </div>
+
+                <div className="pt-2">
+                  <Label className="mb-2 block">Serviços desejados (orçamento)</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 border border-border rounded-md p-3 bg-muted/30">
+                    {SERVICE_OPTIONS.map((s) => (
+                      <label key={s} className="flex items-start gap-2 text-sm cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="mt-1"
+                          checked={services.includes(s)}
+                          onChange={() => toggleService(s)}
+                        />
+                        <span>{s}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Mensagem / detalhes (opcional)</Label>
+                  <textarea
+                    className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="Descreva o problema ou serviço desejado..."
+                  />
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Ao criar a conta, abriremos o WhatsApp da RS Tech com seus dados e o pedido de orçamento.
+                </p>
+
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Cadastrando..." : "Criar conta"}
+                  {loading ? "Cadastrando..." : "Criar conta e enviar pedido pelo WhatsApp"}
                 </Button>
               </form>
             </TabsContent>
