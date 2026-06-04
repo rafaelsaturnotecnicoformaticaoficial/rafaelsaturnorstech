@@ -67,13 +67,16 @@ const Auth = () => {
       return toast.error(error.message);
     }
     if (data.user) {
-      // Update profile flags + city
+      // Update profile flags + extra fields
       await supabase
         .from("profiles")
         .update({
           full_name: form.full_name,
           whatsapp: form.whatsapp,
+          phone: form.phone,
+          address: form.address,
           city: form.city,
+          state: form.state,
           is_affiliate: form.is_affiliate,
           is_loyalty_member: form.is_loyalty_member,
         })
