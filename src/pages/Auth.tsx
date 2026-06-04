@@ -27,7 +27,45 @@ const Auth = () => {
     state: "",
     is_affiliate: true,
     is_loyalty_member: true,
+    message: "",
   });
+  const SERVICE_OPTIONS = [
+    "Formatação de Computador",
+    "Manutenção / Conserto",
+    "Instalação de Programas",
+    "Remoção de Vírus",
+    "Recuperação de Dados",
+    "Recarga de Cartucho / Toner",
+    "Impressão / Cópias / Digitalização",
+    "Suporte Remoto",
+    "Montagem de PC",
+    "Outros",
+  ];
+  const [services, setServices] = useState<string[]>([]);
+  const toggleService = (s: string) =>
+    setServices((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
+
+  const BUSINESS_WHATSAPP = "5535998793630";
+  const sendBudgetToWhatsApp = () => {
+    const lines = [
+      "*Novo cadastro - Pedido de Orçamento (RS Tech)*",
+      "",
+      `*Nome:* ${form.full_name}`,
+      `*WhatsApp:* ${form.whatsapp}`,
+      form.phone ? `*Telefone:* ${form.phone}` : "",
+      `*Endereço:* ${form.address}`,
+      `*Cidade/UF:* ${form.city} - ${form.state}`,
+      `*E-mail:* ${form.email}`,
+      "",
+      `*Programas:* ${[form.is_affiliate ? "Afiliado" : "", form.is_loyalty_member ? "Fidelidade" : ""].filter(Boolean).join(", ") || "Nenhum"}`,
+      "",
+      "*Serviços desejados:*",
+      services.length ? services.map((s) => `- ${s}`).join("\n") : "- (não selecionado)",
+      form.message ? `\n*Mensagem:*\n${form.message}` : "",
+    ].filter(Boolean);
+    const text = encodeURIComponent(lines.join("\n"));
+    window.open(`https://wa.me/${BUSINESS_WHATSAPP}?text=${text}`, "_blank");
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -95,7 +133,8 @@ const Auth = () => {
       }
     }
     setLoading(false);
-    toast.success("Conta criada! Faça login para acessar o painel.");
+    toast.success("Conta criada! Abrindo WhatsApp com seu pedido...");
+    sendBudgetToWhatsApp();
     setTab("login");
   };
 
@@ -208,8 +247,40 @@ const Auth = () => {
                     Quero participar do Programa Fidelidade
                   </label>
                 </div>
+
+                <div className="pt-2">
+                  <Label className="mb-2 block">Serviços desejados (orçamento)</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 border border-border rounded-md p-3 bg-muted/30">
+                    {SERVICE_OPTIONS.map((s) => (
+                      <label key={s} className="flex items-start gap-2 text-sm cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="mt-1"
+                          checked={services.includes(s)}
+                          onChange={() => toggleService(s)}
+                        />
+                        <span>{s}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Mensagem / detalhes (opcional)</Label>
+                  <textarea
+                    className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="Descreva o problema ou serviço desejado..."
+                  />
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Ao criar a conta, abriremos o WhatsApp da RS Tech com seus dados e o pedido de orçamento.
+                </p>
+
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Cadastrando..." : "Criar conta"}
+                  {loading ? "Cadastrando..." : "Criar conta e enviar pedido pelo WhatsApp"}
                 </Button>
               </form>
             </TabsContent>
