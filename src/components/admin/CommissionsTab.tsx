@@ -94,6 +94,7 @@ const CommissionsTab = () => {
       const percent = SERVICE_PERCENT[form.service_type] || 10;
       const commission_value = +(value * percent / 100).toFixed(2);
       const { error } = await supabase.from("affiliate_commissions").insert({
+        affiliate_user_id: form.affiliate_user_id || null,
         affiliate_name: form.affiliate_name,
         affiliate_contact: form.affiliate_contact || null,
         client_name: form.client_name,
@@ -107,7 +108,7 @@ const CommissionsTab = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin_commissions"] });
-      setForm({ affiliate_name: "", affiliate_contact: "", client_name: "", service_type: "informatica", service_value: "", notes: "" });
+      setForm({ affiliate_user_id: "", affiliate_name: "", affiliate_contact: "", client_name: "", service_type: "informatica", service_value: "", notes: "" });
       toast.success("Comissão registrada!");
     },
     onError: (e: Error) => toast.error(e.message),
