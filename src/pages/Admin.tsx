@@ -77,7 +77,8 @@ const Admin = () => {
             <TabsTrigger value="supporters" className="gap-1"><Heart size={14} /> Apoio e Social</TabsTrigger>
             <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Produtos</TabsTrigger>
             <TabsTrigger value="adsense" className="gap-1"><Code size={14} /> Anúncios</TabsTrigger>
-            <TabsTrigger value="affiliates" className="gap-1"><Users size={14} /> Afiliados</TabsTrigger>
+            <TabsTrigger value="affiliates" className="gap-1"><Users size={14} /> Cadastros</TabsTrigger>
+            <TabsTrigger value="members" className="gap-1"><UserCheck size={14} /> Membros</TabsTrigger>
             <TabsTrigger value="commissions" className="gap-1"><DollarSign size={14} /> Comissões</TabsTrigger>
           </TabsList>
 
@@ -86,6 +87,7 @@ const Admin = () => {
           <TabsContent value="products"><ProductsTab /></TabsContent>
           <TabsContent value="adsense"><AdsenseTab /></TabsContent>
           <TabsContent value="affiliates"><AffiliateSignupsTab /></TabsContent>
+          <TabsContent value="members"><MembersTab /></TabsContent>
           <TabsContent value="commissions"><CommissionsTab /></TabsContent>
         </Tabs>
       </div>
