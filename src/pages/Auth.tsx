@@ -114,13 +114,13 @@ const Auth = () => {
           address: form.address,
           city: form.city,
           state: form.state,
-          is_affiliate: form.is_affiliate,
-          is_loyalty_member: form.is_loyalty_member,
+          is_affiliate: program === "afiliado",
+          is_loyalty_member: program === "fidelidade",
         })
         .eq("user_id", data.user.id);
 
       // Create affiliate code if opted in
-      if (form.is_affiliate) {
+      if (program === "afiliado") {
         const code =
           (form.full_name || "rstech")
             .toLowerCase()
