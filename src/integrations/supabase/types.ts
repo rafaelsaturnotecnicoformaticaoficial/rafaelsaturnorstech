@@ -288,6 +288,7 @@ export type Database = {
           is_affiliate: boolean
           is_loyalty_member: boolean
           phone: string | null
+          referred_by_code: string | null
           state: string | null
           updated_at: string
           user_id: string
@@ -303,6 +304,7 @@ export type Database = {
           is_affiliate?: boolean
           is_loyalty_member?: boolean
           phone?: string | null
+          referred_by_code?: string | null
           state?: string | null
           updated_at?: string
           user_id: string
@@ -318,6 +320,7 @@ export type Database = {
           is_affiliate?: boolean
           is_loyalty_member?: boolean
           phone?: string | null
+          referred_by_code?: string | null
           state?: string | null
           updated_at?: string
           user_id?: string
@@ -381,6 +384,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_referrer_name: { Args: { _code: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
