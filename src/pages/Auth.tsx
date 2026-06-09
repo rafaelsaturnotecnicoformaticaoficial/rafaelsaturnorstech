@@ -16,6 +16,8 @@ const Auth = () => {
   const initialMode = params.get("mode") === "signup" ? "signup" : "login";
   const [tab, setTab] = useState(initialMode);
   const [loading, setLoading] = useState(false);
+  const initialProgram = params.get("programa") === "fidelidade" ? "fidelidade" : "afiliado";
+  const [program, setProgram] = useState<"afiliado" | "fidelidade">(initialProgram);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -25,8 +27,6 @@ const Auth = () => {
     address: "",
     city: "",
     state: "",
-    is_affiliate: true,
-    is_loyalty_member: true,
     message: "",
   });
   const SERVICE_OPTIONS = [
@@ -34,8 +34,7 @@ const Auth = () => {
     "Manutenção / Conserto",
     "Instalação de Programas",
     "Remoção de Vírus",
-    "Recuperação de Dados",
-    "Recarga de Cartucho / Toner",
+    "Recarga de Celulares",
     "Impressão / Cópias / Digitalização",
     "Suporte Remoto",
     "Montagem de PC",
@@ -57,7 +56,7 @@ const Auth = () => {
       `*Cidade/UF:* ${form.city} - ${form.state}`,
       `*E-mail:* ${form.email}`,
       "",
-      `*Programas:* ${[form.is_affiliate ? "Afiliado" : "", form.is_loyalty_member ? "Fidelidade" : ""].filter(Boolean).join(", ") || "Nenhum"}`,
+      `*Programa:* ${program === "afiliado" ? "Afiliados" : "Fidelidade"}`,
       "",
       "*Serviços desejados:*",
       services.length ? services.map((s) => `- ${s}`).join("\n") : "- (não selecionado)",
@@ -115,13 +114,13 @@ const Auth = () => {
           address: form.address,
           city: form.city,
           state: form.state,
-          is_affiliate: form.is_affiliate,
-          is_loyalty_member: form.is_loyalty_member,
+          is_affiliate: program === "afiliado",
+          is_loyalty_member: program === "fidelidade",
         })
         .eq("user_id", data.user.id);
 
       // Create affiliate code if opted in
-      if (form.is_affiliate) {
+      if (program === "afiliado") {
         const code =
           (form.full_name || "rstech")
             .toLowerCase()
@@ -229,23 +228,48 @@ const Auth = () => {
                   <Label>Senha *</Label>
                   <Input type="password" required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
                 </div>
-                <div className="flex flex-col gap-2 pt-1">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={form.is_affiliate}
-                      onChange={(e) => setForm({ ...form, is_affiliate: e.target.checked })}
-                    />
-                    Quero participar do Programa de Afiliados
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={form.is_loyalty_member}
-                      onChange={(e) => setForm({ ...form, is_loyalty_member: e.target.checked })}
-                    />
-                    Quero participar do Programa Fidelidade
-                  </label>
+                <div className="pt-1">
+                  <Label className="mb-2 block">Escolha o programa *</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label
+                      className={`flex flex-col items-center justify-center text-center p-3 rounded-md border cursor-pointer transition ${
+                        program === "afiliado"
+                          ? "border-primary bg-primary/5 ring-2 ring-primary"
+                          : "border-border hover:bg-muted/40"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="program"
+                        className="sr-only"
+                        checked={program === "afiliado"}
+                        onChange={() => setProgram("afiliado")}
+                      />
+                      <span className="font-bold text-sm">Programa de Afiliados</span>
+                      <span className="text-xs text-muted-foreground mt-1">
+                        Indique e ganhe comissões
+                      </span>
+                    </label>
+                    <label
+                      className={`flex flex-col items-center justify-center text-center p-3 rounded-md border cursor-pointer transition ${
+                        program === "fidelidade"
+                          ? "border-primary bg-primary/5 ring-2 ring-primary"
+                          : "border-border hover:bg-muted/40"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="program"
+                        className="sr-only"
+                        checked={program === "fidelidade"}
+                        onChange={() => setProgram("fidelidade")}
+                      />
+                      <span className="font-bold text-sm">Programa Fidelidade</span>
+                      <span className="text-xs text-muted-foreground mt-1">
+                        Benefícios e descontos
+                      </span>
+                    </label>
+                  </div>
                 </div>
 
                 <div className="pt-2">
