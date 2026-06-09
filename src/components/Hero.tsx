@@ -1,5 +1,4 @@
 import { MessageCircle } from "lucide-react";
-import { Link } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Hero = () => {
@@ -22,13 +21,15 @@ const Hero = () => {
         <p className="text-lg md:text-xl text-dark-surface-foreground/70 mb-8 max-w-2xl mx-auto">
           Qualidade, rapidez e confiança para você
         </p>
-        <Link
-          to="/auth?mode=signup"
+        <a
+          href="https://wa.me/5535998793630?text=Olá! Gostaria de solicitar um orçamento."
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 py-4 rounded-lg text-lg font-bold transition-colors shadow-lg shadow-secondary/30"
         >
           <MessageCircle size={22} />
           Solicitar orçamento
-        </Link>
+        </a>
       </div>
     </section>
   );

@@ -10,14 +10,31 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
+const SERVICE_OPTIONS = [
+  "Formatação de Computador",
+  "Manutenção / Conserto",
+  "Instalação de Programas",
+  "Remoção de Vírus",
+  "Recarga Crédito de Celular",
+  "Impressão / Cópias / Digitalização",
+  "Suporte Remoto",
+  "Montagem de PC",
+  "Outros",
+];
+
+const BUSINESS_WHATSAPP = "5535998793630";
+
 const Auth = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const initialMode = params.get("mode") === "signup" ? "signup" : "login";
   const [tab, setTab] = useState(initialMode);
   const [loading, setLoading] = useState(false);
-  const initialProgram = params.get("programa") === "fidelidade" ? "fidelidade" : "afiliado";
-  const [program, setProgram] = useState<"afiliado" | "fidelidade">(initialProgram);
+
+  // Referral code (from /r/CODE → localStorage) and referrer name
+  const [refCode, setRefCode] = useState<string | null>(null);
+  const [referrerName, setReferrerName] = useState<string | null>(null);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -29,22 +46,26 @@ const Auth = () => {
     state: "",
     message: "",
   });
-  const SERVICE_OPTIONS = [
-    "Formatação de Computador",
-    "Manutenção / Conserto",
-    "Instalação de Programas",
-    "Remoção de Vírus",
-    "Recarga de Celulares",
-    "Impressão / Cópias / Digitalização",
-    "Suporte Remoto",
-    "Montagem de PC",
-    "Outros",
-  ];
   const [services, setServices] = useState<string[]>([]);
   const toggleService = (s: string) =>
     setServices((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
 
-  const BUSINESS_WHATSAPP = "5535998793630";
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate("/portal");
+    });
+  }, [navigate]);
+
+  useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem("rstech_ref") : null;
+    if (!stored) return;
+    setRefCode(stored);
+    (async () => {
+      const { data } = await supabase.rpc("get_referrer_name" as never, { _code: stored } as never);
+      if (data) setReferrerName(data as unknown as string);
+    })();
+  }, []);
+
   const sendBudgetToWhatsApp = () => {
     const lines = [
       "*Novo cadastro - Pedido de Orçamento (RS Tech)*",
@@ -55,8 +76,7 @@ const Auth = () => {
       `*Endereço:* ${form.address}`,
       `*Cidade/UF:* ${form.city} - ${form.state}`,
       `*E-mail:* ${form.email}`,
-      "",
-      `*Programa:* ${program === "afiliado" ? "Afiliados" : "Fidelidade"}`,
+      refCode ? `*Indicado por:* ${referrerName || refCode}` : "",
       "",
       "*Serviços desejados:*",
       services.length ? services.map((s) => `- ${s}`).join("\n") : "- (não selecionado)",
@@ -65,12 +85,6 @@ const Auth = () => {
     const text = encodeURIComponent(lines.join("\n"));
     window.open(`https://wa.me/${BUSINESS_WHATSAPP}?text=${text}`, "_blank");
   };
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate("/portal");
-    });
-  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,7 +118,7 @@ const Auth = () => {
       return toast.error(error.message);
     }
     if (data.user) {
-      // Update profile flags + extra fields
+      // Every signup joins both Affiliate + Loyalty programs automatically
       await supabase
         .from("profiles")
         .update({
@@ -114,22 +128,21 @@ const Auth = () => {
           address: form.address,
           city: form.city,
           state: form.state,
-          is_affiliate: program === "afiliado",
-          is_loyalty_member: program === "fidelidade",
-        })
+          is_affiliate: true,
+          is_loyalty_member: true,
+          referred_by_code: refCode,
+        } as never)
         .eq("user_id", data.user.id);
 
-      // Create affiliate code if opted in
-      if (program === "afiliado") {
-        const code =
-          (form.full_name || "rstech")
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9]/g, "")
-            .slice(0, 8) + Math.random().toString(36).slice(2, 6);
-        await supabase.from("affiliate_codes").insert({ user_id: data.user.id, code });
-      }
+      // Create personal affiliate code/link
+      const code =
+        (form.full_name || "rstech")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]/g, "")
+          .slice(0, 8) + Math.random().toString(36).slice(2, 6);
+      await supabase.from("affiliate_codes").insert({ user_id: data.user.id, code });
     }
     setLoading(false);
     toast.success("Conta criada! Abrindo WhatsApp com seu pedido...");
@@ -155,6 +168,12 @@ const Auth = () => {
           <p className="text-sm text-muted-foreground text-center mb-6">
             Acompanhe suas indicações, comissões e programa fidelidade.
           </p>
+
+          {refCode && tab === "signup" && (
+            <div className="mb-4 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-foreground">
+              <strong>Você foi indicado por:</strong> {referrerName || refCode}
+            </div>
+          )}
 
           <Button
             type="button"
@@ -194,6 +213,9 @@ const Auth = () => {
 
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-3">
+                <p className="text-xs text-muted-foreground bg-muted/40 border border-border rounded-md px-3 py-2">
+                  Ao se cadastrar você já participa automaticamente do <strong>Programa de Afiliados</strong> (gera seu link de indicação) e do <strong>Programa Fidelidade</strong>.
+                </p>
                 <div>
                   <Label>Nome completo *</Label>
                   <Input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
@@ -227,49 +249,6 @@ const Auth = () => {
                 <div>
                   <Label>Senha *</Label>
                   <Input type="password" required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-                </div>
-                <div className="pt-1">
-                  <Label className="mb-2 block">Escolha o programa *</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <label
-                      className={`flex flex-col items-center justify-center text-center p-3 rounded-md border cursor-pointer transition ${
-                        program === "afiliado"
-                          ? "border-primary bg-primary/5 ring-2 ring-primary"
-                          : "border-border hover:bg-muted/40"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="program"
-                        className="sr-only"
-                        checked={program === "afiliado"}
-                        onChange={() => setProgram("afiliado")}
-                      />
-                      <span className="font-bold text-sm">Programa de Afiliados</span>
-                      <span className="text-xs text-muted-foreground mt-1">
-                        Indique e ganhe comissões
-                      </span>
-                    </label>
-                    <label
-                      className={`flex flex-col items-center justify-center text-center p-3 rounded-md border cursor-pointer transition ${
-                        program === "fidelidade"
-                          ? "border-primary bg-primary/5 ring-2 ring-primary"
-                          : "border-border hover:bg-muted/40"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="program"
-                        className="sr-only"
-                        checked={program === "fidelidade"}
-                        onChange={() => setProgram("fidelidade")}
-                      />
-                      <span className="font-bold text-sm">Programa Fidelidade</span>
-                      <span className="text-xs text-muted-foreground mt-1">
-                        Benefícios e descontos
-                      </span>
-                    </label>
-                  </div>
                 </div>
 
                 <div className="pt-2">
