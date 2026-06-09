@@ -16,6 +16,8 @@ const Auth = () => {
   const initialMode = params.get("mode") === "signup" ? "signup" : "login";
   const [tab, setTab] = useState(initialMode);
   const [loading, setLoading] = useState(false);
+  const initialProgram = params.get("programa") === "fidelidade" ? "fidelidade" : "afiliado";
+  const [program, setProgram] = useState<"afiliado" | "fidelidade">(initialProgram);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -25,8 +27,6 @@ const Auth = () => {
     address: "",
     city: "",
     state: "",
-    is_affiliate: true,
-    is_loyalty_member: true,
     message: "",
   });
   const SERVICE_OPTIONS = [
@@ -34,8 +34,7 @@ const Auth = () => {
     "Manutenção / Conserto",
     "Instalação de Programas",
     "Remoção de Vírus",
-    "Recuperação de Dados",
-    "Recarga de Cartucho / Toner",
+    "Recarga de Celulares",
     "Impressão / Cópias / Digitalização",
     "Suporte Remoto",
     "Montagem de PC",
