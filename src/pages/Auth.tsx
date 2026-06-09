@@ -56,7 +56,7 @@ const Auth = () => {
       `*Cidade/UF:* ${form.city} - ${form.state}`,
       `*E-mail:* ${form.email}`,
       "",
-      `*Programas:* ${[form.is_affiliate ? "Afiliado" : "", form.is_loyalty_member ? "Fidelidade" : ""].filter(Boolean).join(", ") || "Nenhum"}`,
+      `*Programa:* ${program === "afiliado" ? "Afiliados" : "Fidelidade"}`,
       "",
       "*Serviços desejados:*",
       services.length ? services.map((s) => `- ${s}`).join("\n") : "- (não selecionado)",
