@@ -10,12 +10,31 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
+const SERVICE_OPTIONS = [
+  "Formatação de Computador",
+  "Manutenção / Conserto",
+  "Instalação de Programas",
+  "Remoção de Vírus",
+  "Recarga Crédito de Celular",
+  "Impressão / Cópias / Digitalização",
+  "Suporte Remoto",
+  "Montagem de PC",
+  "Outros",
+];
+
+const BUSINESS_WHATSAPP = "5535998793630";
+
 const Auth = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const initialMode = params.get("mode") === "signup" ? "signup" : "login";
   const [tab, setTab] = useState(initialMode);
   const [loading, setLoading] = useState(false);
+
+  // Referral code (from /r/CODE → localStorage) and referrer name
+  const [refCode, setRefCode] = useState<string | null>(null);
+  const [referrerName, setReferrerName] = useState<string | null>(null);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -25,27 +44,28 @@ const Auth = () => {
     address: "",
     city: "",
     state: "",
-    is_affiliate: true,
-    is_loyalty_member: true,
     message: "",
   });
-  const SERVICE_OPTIONS = [
-    "Formatação de Computador",
-    "Manutenção / Conserto",
-    "Instalação de Programas",
-    "Remoção de Vírus",
-    "Recuperação de Dados",
-    "Recarga de Cartucho / Toner",
-    "Impressão / Cópias / Digitalização",
-    "Suporte Remoto",
-    "Montagem de PC",
-    "Outros",
-  ];
   const [services, setServices] = useState<string[]>([]);
   const toggleService = (s: string) =>
     setServices((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
 
-  const BUSINESS_WHATSAPP = "5535998793630";
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate("/portal");
+    });
+  }, [navigate]);
+
+  useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem("rstech_ref") : null;
+    if (!stored) return;
+    setRefCode(stored);
+    (async () => {
+      const { data } = await supabase.rpc("get_referrer_name" as never, { _code: stored } as never);
+      if (data) setReferrerName(data as unknown as string);
+    })();
+  }, []);
+
   const sendBudgetToWhatsApp = () => {
     const lines = [
       "*Novo cadastro - Pedido de Orçamento (RS Tech)*",
@@ -56,8 +76,7 @@ const Auth = () => {
       `*Endereço:* ${form.address}`,
       `*Cidade/UF:* ${form.city} - ${form.state}`,
       `*E-mail:* ${form.email}`,
-      "",
-      `*Programas:* ${[form.is_affiliate ? "Afiliado" : "", form.is_loyalty_member ? "Fidelidade" : ""].filter(Boolean).join(", ") || "Nenhum"}`,
+      refCode ? `*Indicado por:* ${referrerName || refCode}` : "",
       "",
       "*Serviços desejados:*",
       services.length ? services.map((s) => `- ${s}`).join("\n") : "- (não selecionado)",
@@ -66,12 +85,6 @@ const Auth = () => {
     const text = encodeURIComponent(lines.join("\n"));
     window.open(`https://wa.me/${BUSINESS_WHATSAPP}?text=${text}`, "_blank");
   };
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate("/portal");
-    });
-  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,7 +118,7 @@ const Auth = () => {
       return toast.error(error.message);
     }
     if (data.user) {
-      // Update profile flags + extra fields
+      // Every signup joins both Affiliate + Loyalty programs automatically
       await supabase
         .from("profiles")
         .update({
@@ -115,22 +128,21 @@ const Auth = () => {
           address: form.address,
           city: form.city,
           state: form.state,
-          is_affiliate: form.is_affiliate,
-          is_loyalty_member: form.is_loyalty_member,
-        })
+          is_affiliate: true,
+          is_loyalty_member: true,
+          referred_by_code: refCode,
+        } as never)
         .eq("user_id", data.user.id);
 
-      // Create affiliate code if opted in
-      if (form.is_affiliate) {
-        const code =
-          (form.full_name || "rstech")
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9]/g, "")
-            .slice(0, 8) + Math.random().toString(36).slice(2, 6);
-        await supabase.from("affiliate_codes").insert({ user_id: data.user.id, code });
-      }
+      // Create personal affiliate code/link
+      const code =
+        (form.full_name || "rstech")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]/g, "")
+          .slice(0, 8) + Math.random().toString(36).slice(2, 6);
+      await supabase.from("affiliate_codes").insert({ user_id: data.user.id, code });
     }
     setLoading(false);
     toast.success("Conta criada! Abrindo WhatsApp com seu pedido...");
@@ -156,6 +168,12 @@ const Auth = () => {
           <p className="text-sm text-muted-foreground text-center mb-6">
             Acompanhe suas indicações, comissões e programa fidelidade.
           </p>
+
+          {refCode && tab === "signup" && (
+            <div className="mb-4 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-foreground">
+              <strong>Você foi indicado por:</strong> {referrerName || refCode}
+            </div>
+          )}
 
           <Button
             type="button"
@@ -195,6 +213,9 @@ const Auth = () => {
 
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-3">
+                <p className="text-xs text-muted-foreground bg-muted/40 border border-border rounded-md px-3 py-2">
+                  Ao se cadastrar você já participa automaticamente do <strong>Programa de Afiliados</strong> (gera seu link de indicação) e do <strong>Programa Fidelidade</strong>.
+                </p>
                 <div>
                   <Label>Nome completo *</Label>
                   <Input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
@@ -228,24 +249,6 @@ const Auth = () => {
                 <div>
                   <Label>Senha *</Label>
                   <Input type="password" required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-                </div>
-                <div className="flex flex-col gap-2 pt-1">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={form.is_affiliate}
-                      onChange={(e) => setForm({ ...form, is_affiliate: e.target.checked })}
-                    />
-                    Quero participar do Programa de Afiliados
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={form.is_loyalty_member}
-                      onChange={(e) => setForm({ ...form, is_loyalty_member: e.target.checked })}
-                    />
-                    Quero participar do Programa Fidelidade
-                  </label>
                 </div>
 
                 <div className="pt-2">
