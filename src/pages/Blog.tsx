@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import AdBanner from "@/components/AdBanner";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLink, Newspaper } from "lucide-react";
 
@@ -75,7 +74,6 @@ const Blog = () => {
           </div>
         </div>
 
-        <AdBanner variant="leaderboard" />
 
         <section className="py-10 md:py-14 bg-background">
           <div className="container mx-auto px-4">
@@ -162,7 +160,6 @@ const Blog = () => {
           </div>
         </section>
 
-        <AdBanner variant="in-article" format="fluid" />
       </main>
       <Footer />
     </div>
