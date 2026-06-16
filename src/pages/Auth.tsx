@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { z } from "zod";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,18 +12,36 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
 const SERVICE_OPTIONS = [
+  // Informática
   "Formatação de Computador",
   "Manutenção / Conserto",
   "Instalação de Programas",
   "Remoção de Vírus",
   "Recarga Crédito de Celular",
-  "Impressão / Cópias / Digitalização",
   "Suporte Remoto",
   "Montagem de PC",
+  // Gráfica
+  "Impressão / Cópias / Digitalização",
+  "Impressão Colorida",
+  "Cartão de Visita",
+  "Banner / Faixa",
+  "Plotagem",
+  "Encadernação",
   "Outros",
 ];
 
 const BUSINESS_WHATSAPP = "5535998793630";
+
+const budgetSchema = z.object({
+  full_name: z.string().trim().min(2, "Nome muito curto").max(100, "Nome muito longo"),
+  whatsapp: z.string().trim().min(10, "WhatsApp inválido").max(20, "WhatsApp inválido"),
+  phone: z.string().trim().max(20, "Telefone inválido").optional().or(z.literal("")),
+  email: z.string().trim().email("E-mail inválido").max(255, "E-mail muito longo"),
+  city: z.string().trim().min(2, "Cidade obrigatória").max(80, "Cidade muito longa"),
+  state: z.string().trim().length(2, "Use a sigla do estado (ex.: SP)"),
+  address: z.string().trim().max(200, "Endereço muito longo").optional().or(z.literal("")),
+  message: z.string().trim().max(1000, "Mensagem muito longa").optional().or(z.literal("")),
+});
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -30,10 +49,6 @@ const Auth = () => {
   const initialMode = params.get("mode") === "signup" ? "signup" : "login";
   const [tab, setTab] = useState(initialMode);
   const [loading, setLoading] = useState(false);
-
-  // Referral code (from /r/CODE → localStorage) and referrer name
-  const [refCode, setRefCode] = useState<string | null>(null);
-  const [referrerName, setReferrerName] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     email: "",
@@ -56,27 +71,16 @@ const Auth = () => {
     });
   }, [navigate]);
 
-  useEffect(() => {
-    const stored = typeof window !== "undefined" ? localStorage.getItem("rstech_ref") : null;
-    if (!stored) return;
-    setRefCode(stored);
-    (async () => {
-      const { data } = await supabase.rpc("get_referrer_name" as never, { _code: stored } as never);
-      if (data) setReferrerName(data as unknown as string);
-    })();
-  }, []);
-
   const sendBudgetToWhatsApp = () => {
     const lines = [
-      "*Novo cadastro - Pedido de Orçamento (RS Tech)*",
+      "*Pedido de Orçamento - RS Tech*",
       "",
       `*Nome:* ${form.full_name}`,
       `*WhatsApp:* ${form.whatsapp}`,
       form.phone ? `*Telefone:* ${form.phone}` : "",
-      `*Endereço:* ${form.address}`,
+      form.address ? `*Endereço:* ${form.address}` : "",
       `*Cidade/UF:* ${form.city} - ${form.state}`,
       `*E-mail:* ${form.email}`,
-      refCode ? `*Indicado por:* ${referrerName || refCode}` : "",
       "",
       "*Serviços desejados:*",
       services.length ? services.map((s) => `- ${s}`).join("\n") : "- (não selecionado)",
@@ -99,74 +103,49 @@ const Auth = () => {
     navigate("/portal");
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleBudgetRequest = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const parsed = budgetSchema.safeParse(form);
+    if (!parsed.success) {
+      return toast.error(parsed.error.issues[0].message);
+    }
+    if (services.length === 0) {
+      return toast.error("Selecione pelo menos um serviço");
+    }
+
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/portal`,
-        data: {
-          full_name: form.full_name,
-          whatsapp: form.whatsapp,
-        },
-      },
-    });
-    if (error) {
-      setLoading(false);
-      return toast.error(error.message);
-    }
-    if (data.user) {
-      // Update profile with full data
-      await supabase
-        .from("profiles")
-        .update({
-          full_name: form.full_name,
-          whatsapp: form.whatsapp,
-          phone: form.phone,
-          address: form.address,
-          city: form.city,
-          state: form.state,
-          is_affiliate: true,
-          is_loyalty_member: true,
-          referred_by_code: refCode,
-        } as never)
-        .eq("user_id", data.user.id);
 
-      // Create personal affiliate code/link
-      const code =
-        (form.full_name || "rstech")
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9]/g, "")
-          .slice(0, 8) + Math.random().toString(36).slice(2, 6);
-      await supabase.from("affiliate_codes").insert({ user_id: data.user.id, code });
-    }
-
-    // Register signup so it shows in the admin panel ("Cadastros")
     const notesParts = [
       form.phone ? `Telefone: ${form.phone}` : "",
       form.address ? `Endereço: ${form.address}` : "",
       form.state ? `Estado: ${form.state}` : "",
-      services.length ? `Serviços: ${services.join(", ")}` : "",
+      `Serviços: ${services.join(", ")}`,
       form.message ? `Mensagem: ${form.message}` : "",
-      refCode ? `Indicado por: ${referrerName || refCode}` : "",
     ].filter(Boolean);
-    await supabase.from("affiliate_signups").insert({
+
+    const { error } = await supabase.from("affiliate_signups").insert({
       name: form.full_name,
       email: form.email,
       whatsapp: form.whatsapp,
       city: form.city || null,
-      channel: refCode ? `Indicação: ${referrerName || refCode}` : "Cadastro site",
+      channel: "Orçamento site",
       notes: notesParts.join(" | ") || null,
     });
 
     setLoading(false);
-    toast.success("Conta criada! Abrindo WhatsApp com seu pedido...");
+
+    if (error) {
+      return toast.error("Não foi possível enviar. Tente novamente.");
+    }
+
+    toast.success("Pedido enviado! Abrindo WhatsApp...");
     sendBudgetToWhatsApp();
-    setTab("login");
+    setForm({
+      email: "", password: "", full_name: "", whatsapp: "", phone: "",
+      address: "", city: "", state: "", message: "",
+    });
+    setServices([]);
   };
 
   const handleGoogle = async () => {
@@ -182,39 +161,33 @@ const Auth = () => {
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md bg-card border border-border rounded-2xl shadow-lg p-6 md:p-8">
           <h1 className="font-display text-2xl font-extrabold text-center mb-2">
-            Portal do Cliente RS Tech
+            RS Tech - Atendimento ao Cliente
           </h1>
           <p className="text-sm text-muted-foreground text-center mb-6">
-            Acompanhe suas indicações, comissões e programa fidelidade.
+            Solicite seu orçamento de serviços de informática e gráfica, ou acesse sua conta.
           </p>
-
-          {refCode && tab === "signup" && (
-            <div className="mb-4 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-foreground">
-              <strong>Você foi indicado por:</strong> {referrerName || refCode}
-            </div>
-          )}
-
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full mb-4"
-            onClick={handleGoogle}
-          >
-            Entrar com Google
-          </Button>
-
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t" /></div>
-            <span className="relative bg-card px-2 text-xs text-muted-foreground mx-auto block w-fit">ou com e-mail</span>
-          </div>
 
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList className="grid grid-cols-2 w-full mb-4">
+              <TabsTrigger value="signup">Solicitar Orçamento</TabsTrigger>
               <TabsTrigger value="login">Entrar</TabsTrigger>
-              <TabsTrigger value="signup">Cadastrar</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mb-4"
+                onClick={handleGoogle}
+              >
+                Entrar com Google
+              </Button>
+
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t" /></div>
+                <span className="relative bg-card px-2 text-xs text-muted-foreground mx-auto block w-fit">ou com e-mail</span>
+              </div>
+
               <form onSubmit={handleLogin} className="space-y-3">
                 <div>
                   <Label>E-mail</Label>
@@ -231,45 +204,43 @@ const Auth = () => {
             </TabsContent>
 
             <TabsContent value="signup">
-              <form onSubmit={handleSignup} className="space-y-3">
-
+              <form onSubmit={handleBudgetRequest} className="space-y-3">
+                <p className="text-xs text-muted-foreground bg-muted/40 border border-border rounded-md px-3 py-2">
+                  Preencha seus dados e selecione os serviços. Enviaremos seu pedido direto para o nosso WhatsApp.
+                </p>
                 <div>
                   <Label>Nome completo *</Label>
-                  <Input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+                  <Input required maxLength={100} value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
                 </div>
                 <div>
                   <Label>WhatsApp *</Label>
-                  <Input required value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} />
+                  <Input required maxLength={20} placeholder="(35) 99999-9999" value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} />
                 </div>
                 <div>
                   <Label>Telefone</Label>
-                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                  <Input maxLength={20} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
                 </div>
                 <div>
-                  <Label>Endereço *</Label>
-                  <Input required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                  <Label>E-mail *</Label>
+                  <Input type="email" required maxLength={255} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Endereço</Label>
+                  <Input maxLength={200} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <Label>Cidade *</Label>
-                    <Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                    <Input required maxLength={80} value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
                   </div>
                   <div>
                     <Label>Estado *</Label>
                     <Input required maxLength={2} placeholder="SP" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value.toUpperCase() })} />
                   </div>
                 </div>
-                <div>
-                  <Label>E-mail *</Label>
-                  <Input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-                </div>
-                <div>
-                  <Label>Senha *</Label>
-                  <Input type="password" required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-                </div>
 
                 <div className="pt-2">
-                  <Label className="mb-2 block">Serviços desejados (orçamento)</Label>
+                  <Label className="mb-2 block">Serviços desejados *</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 border border-border rounded-md p-3 bg-muted/30">
                     {SERVICE_OPTIONS.map((s) => (
                       <label key={s} className="flex items-start gap-2 text-sm cursor-pointer">
@@ -289,18 +260,15 @@ const Auth = () => {
                   <Label>Mensagem / detalhes (opcional)</Label>
                   <textarea
                     className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    maxLength={1000}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     placeholder="Descreva o problema ou serviço desejado..."
                   />
                 </div>
 
-                <p className="text-xs text-muted-foreground">
-                  Ao criar a conta, abriremos o WhatsApp da RS Tech com seus dados e o pedido de orçamento.
-                </p>
-
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Cadastrando..." : "Criar conta e enviar pedido pelo WhatsApp"}
+                  {loading ? "Enviando..." : "Enviar pedido pelo WhatsApp"}
                 </Button>
               </form>
             </TabsContent>
