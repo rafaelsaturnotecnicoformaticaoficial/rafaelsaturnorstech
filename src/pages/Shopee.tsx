@@ -5,12 +5,12 @@ import { ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
 const Shopee = () => {
-  const [keyword, setKeyword] = useState("informatica");
+  const [keyword, setKeyword] = useState("ofertas");
   const [input, setInput] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setKeyword(input.trim() || "informatica");
+    setKeyword(input.trim() || "ofertas");
   };
 
   return (
@@ -27,7 +27,7 @@ const Shopee = () => {
               Shopee Rafael Saturno
             </h1>
             <p className="text-primary-foreground/70 max-w-lg mx-auto mb-6">
-              Produtos selecionados de tecnologia e informática direto da Shopee, com links de afiliado oficiais.
+              Todos os produtos da Shopee em um só lugar, com links de afiliado oficiais. Use a busca para encontrar qualquer categoria.
             </p>
             <form onSubmit={handleSearch} className="max-w-md mx-auto flex gap-2">
               <input
