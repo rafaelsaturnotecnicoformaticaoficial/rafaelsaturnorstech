@@ -118,7 +118,7 @@ const Auth = () => {
       return toast.error(error.message);
     }
     if (data.user) {
-      // Every signup joins both Affiliate + Loyalty programs automatically
+      // Update profile with full data
       await supabase
         .from("profiles")
         .update({
@@ -144,6 +144,25 @@ const Auth = () => {
           .slice(0, 8) + Math.random().toString(36).slice(2, 6);
       await supabase.from("affiliate_codes").insert({ user_id: data.user.id, code });
     }
+
+    // Register signup so it shows in the admin panel ("Cadastros")
+    const notesParts = [
+      form.phone ? `Telefone: ${form.phone}` : "",
+      form.address ? `Endereço: ${form.address}` : "",
+      form.state ? `Estado: ${form.state}` : "",
+      services.length ? `Serviços: ${services.join(", ")}` : "",
+      form.message ? `Mensagem: ${form.message}` : "",
+      refCode ? `Indicado por: ${referrerName || refCode}` : "",
+    ].filter(Boolean);
+    await supabase.from("affiliate_signups").insert({
+      name: form.full_name,
+      email: form.email,
+      whatsapp: form.whatsapp,
+      city: form.city || null,
+      channel: refCode ? `Indicação: ${referrerName || refCode}` : "Cadastro site",
+      notes: notesParts.join(" | ") || null,
+    });
+
     setLoading(false);
     toast.success("Conta criada! Abrindo WhatsApp com seu pedido...");
     sendBudgetToWhatsApp();
@@ -213,9 +232,7 @@ const Auth = () => {
 
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-3">
-                <p className="text-xs text-muted-foreground bg-muted/40 border border-border rounded-md px-3 py-2">
-                  Ao se cadastrar você já participa automaticamente do <strong>Programa de Afiliados</strong> (gera seu link de indicação) e do <strong>Programa Fidelidade</strong>.
-                </p>
+
                 <div>
                   <Label>Nome completo *</Label>
                   <Input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
