@@ -23,7 +23,7 @@ interface ShopeeProductsProps {
   title?: string;
 }
 
-const ShopeeProducts = ({ keyword = "informatica", title = "Ofertas Shopee" }: ShopeeProductsProps) => {
+const ShopeeProducts = ({ keyword = "ofertas", title = "Ofertas Shopee" }: ShopeeProductsProps) => {
   const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["shopee-products", keyword],
     initialPageParam: 1,
