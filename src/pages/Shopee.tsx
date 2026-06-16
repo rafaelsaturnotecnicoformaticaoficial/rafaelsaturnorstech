@@ -5,12 +5,12 @@ import { ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
 const Shopee = () => {
-  const [keyword, setKeyword] = useState("informatica");
+  const [keyword, setKeyword] = useState("ofertas");
   const [input, setInput] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setKeyword(input.trim() || "informatica");
+    setKeyword(input.trim() || "ofertas");
   };
 
   return (
