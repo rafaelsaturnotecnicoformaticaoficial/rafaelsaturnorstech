@@ -21,7 +21,6 @@ Deno.serve(async (req) => {
     const APP_ID = (Deno.env.get("SHOPEE_APP_ID") ?? "").trim();
     const APP_SECRET = (Deno.env.get("SHOPEE_APP_SECRET") ?? "").trim();
     if (!APP_ID || !APP_SECRET) throw new Error("SHOPEE_APP_ID/SHOPEE_APP_SECRET not configured");
-    console.log("Shopee creds — appId len:", APP_ID.length, "secret len:", APP_SECRET.length);
 
     const url = new URL(req.url);
     const keyword = url.searchParams.get("keyword") ?? "";
@@ -47,7 +46,8 @@ Deno.serve(async (req) => {
     });
     const data = await r.json();
     if (!r.ok || data.errors) {
-      return new Response(JSON.stringify({ error: data.errors ?? "Shopee error", raw: data }), {
+      console.error("Shopee API error:", data.errors ?? data);
+      return new Response(JSON.stringify({ error: "Shopee API error" }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
