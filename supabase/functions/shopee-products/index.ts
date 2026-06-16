@@ -46,7 +46,8 @@ Deno.serve(async (req) => {
     });
     const data = await r.json();
     if (!r.ok || data.errors) {
-      return new Response(JSON.stringify({ error: data.errors ?? "Shopee error", raw: data }), {
+      console.error("Shopee API error:", data.errors ?? data);
+      return new Response(JSON.stringify({ error: "Shopee API error" }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
