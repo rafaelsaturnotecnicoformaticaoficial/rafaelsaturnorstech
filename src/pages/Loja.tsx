@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import AdBanner from "@/components/AdBanner";
 import { ShoppingBag, ExternalLink, ArrowRight } from "lucide-react";
 
 const categorias = [
@@ -68,7 +67,6 @@ const Loja = () => {
           </div>
         </div>
 
-        <AdBanner variant="leaderboard" />
 
         {/* Categorias */}
         <section className="py-14 bg-background">
@@ -115,7 +113,6 @@ const Loja = () => {
           </div>
         </section>
 
-        <AdBanner variant="in-article" format="fluid" />
       </main>
       <Footer />
     </div>
