@@ -21,7 +21,6 @@ Deno.serve(async (req) => {
     const APP_ID = (Deno.env.get("SHOPEE_APP_ID") ?? "").trim();
     const APP_SECRET = (Deno.env.get("SHOPEE_APP_SECRET") ?? "").trim();
     if (!APP_ID || !APP_SECRET) throw new Error("SHOPEE_APP_ID/SHOPEE_APP_SECRET not configured");
-    console.log("Shopee creds — appId len:", APP_ID.length, "secret len:", APP_SECRET.length);
 
     const url = new URL(req.url);
     const keyword = url.searchParams.get("keyword") ?? "";
