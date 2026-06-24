@@ -328,6 +328,177 @@ export type Database = {
         }
         Relationships: []
       }
+      shop_order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          unit_price_cents: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity: number
+          unit_price_cents: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "shop_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shop_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "shop_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_orders: {
+        Row: {
+          address: string
+          address_complement: string | null
+          address_number: string | null
+          cep: string
+          city: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_whatsapp: string
+          id: string
+          neighborhood: string | null
+          notes: string | null
+          shipping_cents: number
+          shipping_deadline_days: number | null
+          shipping_service: string | null
+          state: string | null
+          status: string
+          subtotal_cents: number
+          total_cents: number
+          tracking_code: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          address: string
+          address_complement?: string | null
+          address_number?: string | null
+          cep: string
+          city?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_whatsapp: string
+          id?: string
+          neighborhood?: string | null
+          notes?: string | null
+          shipping_cents?: number
+          shipping_deadline_days?: number | null
+          shipping_service?: string | null
+          state?: string | null
+          status?: string
+          subtotal_cents: number
+          total_cents: number
+          tracking_code?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string
+          address_complement?: string | null
+          address_number?: string | null
+          cep?: string
+          city?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_whatsapp?: string
+          id?: string
+          neighborhood?: string | null
+          notes?: string | null
+          shipping_cents?: number
+          shipping_deadline_days?: number | null
+          shipping_service?: string | null
+          state?: string | null
+          status?: string
+          subtotal_cents?: number
+          total_cents?: number
+          tracking_code?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      shop_products: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          height_cm: number
+          id: string
+          image_url: string
+          length_cm: number
+          name: string
+          price_cents: number
+          sort_order: number
+          stock: number
+          updated_at: string
+          weight_g: number
+          width_cm: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          height_cm?: number
+          id?: string
+          image_url: string
+          length_cm?: number
+          name: string
+          price_cents: number
+          sort_order?: number
+          stock?: number
+          updated_at?: string
+          weight_g?: number
+          width_cm?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          height_cm?: number
+          id?: string
+          image_url?: string
+          length_cm?: number
+          name?: string
+          price_cents?: number
+          sort_order?: number
+          stock?: number
+          updated_at?: string
+          weight_g?: number
+          width_cm?: number
+        }
+        Relationships: []
+      }
       supporters: {
         Row: {
           active: boolean
