@@ -75,12 +75,9 @@ const Admin = () => {
             <TabsTrigger value="partners" className="gap-1"><Handshake size={14} /> Parceiros</TabsTrigger>
             <TabsTrigger value="supporters" className="gap-1"><Heart size={14} /> Apoio e Social</TabsTrigger>
             <TabsTrigger value="shop" className="gap-1"><Store size={14} /> Loja</TabsTrigger>
-            <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Afiliados</TabsTrigger>
+            <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Recomendados</TabsTrigger>
             <TabsTrigger value="adsense" className="gap-1"><Code size={14} /> Anúncios</TabsTrigger>
             <TabsTrigger value="budgets" className="gap-1"><FileText size={14} /> Orçamentos</TabsTrigger>
-            <TabsTrigger value="affiliates" className="gap-1"><Users size={14} /> Cadastros</TabsTrigger>
-            <TabsTrigger value="members" className="gap-1"><UserCheck size={14} /> Membros</TabsTrigger>
-            <TabsTrigger value="commissions" className="gap-1"><DollarSign size={14} /> Comissões</TabsTrigger>
           </TabsList>
 
           <TabsContent value="partners"><PartnersTab /></TabsContent>
@@ -89,9 +86,6 @@ const Admin = () => {
           <TabsContent value="products"><ProductsTab /></TabsContent>
           <TabsContent value="adsense"><AdsenseTab /></TabsContent>
           <TabsContent value="budgets"><BudgetsTab /></TabsContent>
-          <TabsContent value="affiliates"><AffiliateSignupsTab /></TabsContent>
-          <TabsContent value="members"><MembersTab /></TabsContent>
-          <TabsContent value="commissions"><CommissionsTab /></TabsContent>
         </Tabs>
       </div>
     </div>
