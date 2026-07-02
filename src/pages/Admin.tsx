@@ -9,12 +9,9 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload, Pencil, Users, DollarSign, UserCheck, FileText, Store } from "lucide-react";
+import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload, Pencil, FileText, Store } from "lucide-react";
 import SupportersTab from "@/components/admin/SupportersTab";
-import AffiliateSignupsTab from "@/components/admin/AffiliateSignupsTab";
 import BudgetsTab from "@/components/admin/BudgetsTab";
-import CommissionsTab from "@/components/admin/CommissionsTab";
-import MembersTab from "@/components/admin/MembersTab";
 import ShopTab from "@/components/admin/ShopTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
@@ -78,12 +75,9 @@ const Admin = () => {
             <TabsTrigger value="partners" className="gap-1"><Handshake size={14} /> Parceiros</TabsTrigger>
             <TabsTrigger value="supporters" className="gap-1"><Heart size={14} /> Apoio e Social</TabsTrigger>
             <TabsTrigger value="shop" className="gap-1"><Store size={14} /> Loja</TabsTrigger>
-            <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Afiliados</TabsTrigger>
+            <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Recomendados</TabsTrigger>
             <TabsTrigger value="adsense" className="gap-1"><Code size={14} /> Anúncios</TabsTrigger>
             <TabsTrigger value="budgets" className="gap-1"><FileText size={14} /> Orçamentos</TabsTrigger>
-            <TabsTrigger value="affiliates" className="gap-1"><Users size={14} /> Cadastros</TabsTrigger>
-            <TabsTrigger value="members" className="gap-1"><UserCheck size={14} /> Membros</TabsTrigger>
-            <TabsTrigger value="commissions" className="gap-1"><DollarSign size={14} /> Comissões</TabsTrigger>
           </TabsList>
 
           <TabsContent value="partners"><PartnersTab /></TabsContent>
@@ -92,9 +86,6 @@ const Admin = () => {
           <TabsContent value="products"><ProductsTab /></TabsContent>
           <TabsContent value="adsense"><AdsenseTab /></TabsContent>
           <TabsContent value="budgets"><BudgetsTab /></TabsContent>
-          <TabsContent value="affiliates"><AffiliateSignupsTab /></TabsContent>
-          <TabsContent value="members"><MembersTab /></TabsContent>
-          <TabsContent value="commissions"><CommissionsTab /></TabsContent>
         </Tabs>
       </div>
     </div>
