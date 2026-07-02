@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.shopee-products]
 verify_jwt = false
+
+[functions.calcular-frete]
+verify_jwt = false
+
+[functions.criar-pedido]
+verify_jwt = false
