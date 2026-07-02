@@ -38,8 +38,7 @@ const Header = () => {
           <a href="#suporte-remoto" className="hover:text-primary transition-colors">Suporte Remoto</a>
           <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
           <a href="/blog" className="hover:text-primary transition-colors">Blog</a>
-          <a href="/afiliados" className="hover:text-primary transition-colors">Afiliados</a>
-          <a href="/portal" className="hover:text-primary transition-colors">Meu Painel</a>
+          <a href="/blog" className="hover:text-primary transition-colors">Blog</a>
           {/* Contato com dropdown */}
           <div className="relative" ref={contatoRef}>
             <button
