@@ -29,10 +29,6 @@ const App = () => (
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/shopee" element={<Shopee />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/afiliados" element={<Afiliados />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/portal" element={<Portal />} />
-          <Route path="/r/:code" element={<Referral />} />
           <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
           <Route path="/termos-de-uso" element={<TermosDeUso />} />
           <Route path="/admin/login" element={<AdminLogin />} />
