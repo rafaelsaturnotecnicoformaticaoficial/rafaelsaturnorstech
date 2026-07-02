@@ -138,8 +138,6 @@ const Header = () => {
           <a href="#suporte-remoto" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Suporte Remoto</a>
           <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Vantagens</a>
           <a href="/blog" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Blog</a>
-          <a href="/afiliados" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Afiliados</a>
-          <a href="/portal" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Meu Painel</a>
           <p className="text-primary font-semibold text-sm pt-2">Contato</p>
           <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Fale Conosco</a>
           <a href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Canal RS Tech</a>
