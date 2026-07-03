@@ -229,7 +229,7 @@ const PrintingService = () => {
               <span className="font-semibold">{brl(unit)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Subtotal ({qty} folha{qty > 1 ? "s" : ""})</span>
+              <span>Subtotal ({sheets} folha{sheets > 1 ? "s" : ""})</span>
               <span className="font-semibold">{brl(subtotal)}</span>
             </div>
             <div className="flex justify-between">
