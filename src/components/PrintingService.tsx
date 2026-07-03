@@ -29,8 +29,9 @@ type Color = "pb" | "color";
 type Face = "frente" | "frente_verso";
 type Delivery = "retirada" | "local" | "correio";
 
-const LOCAL_FEE_CENTS = 1000; // R$ 10 entrega local Itajubá
+const LOCAL_FEE_CENTS = 1000; // R$ 10 entrega local São Pedro da União - MG
 const CORREIO_FEE_CENTS = 1500; // R$ 15 envio Correios simples (envelope)
+const PICKUP_LOCATION = "São Pedro da União - MG";
 
 const PrintingService = () => {
   const [color, setColor] = useState<Color>("pb");
@@ -42,12 +43,16 @@ const PrintingService = () => {
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
 
-  const unit = useMemo(() => {
-    const q = Math.max(1, qty);
-    return PRICES[color][face][tierIndex(q)];
-  }, [color, face, qty]);
+  const sheets = Math.max(1, qty);
+  const pagesPerSheet = face === "frente" ? 1 : 2;
+  const pages = sheets * pagesPerSheet;
 
-  const subtotal = unit * Math.max(1, qty);
+  const unit = useMemo(
+    () => PRICES[color][face][tierIndex(sheets)],
+    [color, face, sheets],
+  );
+
+  const subtotal = unit * sheets;
   const shipping =
     delivery === "retirada" ? 0 : delivery === "local" ? LOCAL_FEE_CENTS : CORREIO_FEE_CENTS;
   const total = subtotal + shipping;
@@ -70,15 +75,16 @@ const PrintingService = () => {
       "",
       `Tipo: ${color === "pb" ? "Preto e Branco" : "Colorida"}`,
       `Impressão: ${face === "frente" ? "Frente" : "Frente e Verso"}`,
-      `Quantidade: ${qty} folha(s)`,
+      `Folhas: ${sheets}`,
+      `Páginas impressas: ${pages} (${pagesPerSheet} por folha)`,
       `Valor por folha: ${brl(unit)}`,
       `Subtotal: ${brl(subtotal)}`,
       "",
       `Entrega: ${
         delivery === "retirada"
-          ? "Retirada no local (grátis)"
+          ? `Retirada na loja — ${PICKUP_LOCATION} (grátis)`
           : delivery === "local"
-          ? `Entrega em Itajubá (${brl(LOCAL_FEE_CENTS)})`
+          ? `Entrega em ${PICKUP_LOCATION} (${brl(LOCAL_FEE_CENTS)})`
           : `Envio por Correios (${brl(CORREIO_FEE_CENTS)})`
       }`,
       delivery !== "retirada" ? `Endereço: ${address}` : "",
@@ -96,6 +102,7 @@ const PrintingService = () => {
     );
     toast.success("Pedido enviado! Envie o arquivo pelo WhatsApp.");
   };
+
 
   return (
     <section className="mb-8 bg-card border-2 border-primary/30 rounded-2xl overflow-hidden shadow-md">
@@ -175,8 +182,8 @@ const PrintingService = () => {
             <div className="grid gap-2 mt-1">
               {(
                 [
-                  { v: "retirada", label: "Retirar no local", price: "Grátis" },
-                  { v: "local", label: "Entrega em Itajubá", price: brl(LOCAL_FEE_CENTS) },
+                  { v: "retirada", label: `Retirar na loja — ${PICKUP_LOCATION}`, price: "Grátis" },
+                  { v: "local", label: `Entrega em ${PICKUP_LOCATION}`, price: brl(LOCAL_FEE_CENTS) },
                   { v: "correio", label: "Envio pelos Correios", price: brl(CORREIO_FEE_CENTS) },
                 ] as { v: Delivery; label: string; price: string }[]
               ).map((opt) => (
@@ -208,11 +215,21 @@ const PrintingService = () => {
         <div className="space-y-3">
           <div className="bg-muted/40 rounded-lg p-3 space-y-1 text-sm">
             <div className="flex justify-between">
+              <span>Folhas</span>
+              <span className="font-semibold">{sheets}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Páginas impressas</span>
+              <span className="font-semibold">
+                {pages} <span className="text-xs text-muted-foreground">({pagesPerSheet}/folha)</span>
+              </span>
+            </div>
+            <div className="flex justify-between">
               <span>Valor por folha</span>
               <span className="font-semibold">{brl(unit)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Subtotal ({qty} folha{qty > 1 ? "s" : ""})</span>
+              <span>Subtotal ({sheets} folha{sheets > 1 ? "s" : ""})</span>
               <span className="font-semibold">{brl(subtotal)}</span>
             </div>
             <div className="flex justify-between">
