@@ -215,6 +215,16 @@ const PrintingService = () => {
         <div className="space-y-3">
           <div className="bg-muted/40 rounded-lg p-3 space-y-1 text-sm">
             <div className="flex justify-between">
+              <span>Folhas</span>
+              <span className="font-semibold">{sheets}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Páginas impressas</span>
+              <span className="font-semibold">
+                {pages} <span className="text-xs text-muted-foreground">({pagesPerSheet}/folha)</span>
+              </span>
+            </div>
+            <div className="flex justify-between">
               <span>Valor por folha</span>
               <span className="font-semibold">{brl(unit)}</span>
             </div>
