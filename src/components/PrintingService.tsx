@@ -182,8 +182,8 @@ const PrintingService = () => {
             <div className="grid gap-2 mt-1">
               {(
                 [
-                  { v: "retirada", label: "Retirar no local", price: "Grátis" },
-                  { v: "local", label: "Entrega em Itajubá", price: brl(LOCAL_FEE_CENTS) },
+                  { v: "retirada", label: `Retirar na loja — ${PICKUP_LOCATION}`, price: "Grátis" },
+                  { v: "local", label: `Entrega em ${PICKUP_LOCATION}`, price: brl(LOCAL_FEE_CENTS) },
                   { v: "correio", label: "Envio pelos Correios", price: brl(CORREIO_FEE_CENTS) },
                 ] as { v: Delivery; label: string; price: string }[]
               ).map((opt) => (
