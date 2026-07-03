@@ -95,6 +95,8 @@ const Pedidos = () => {
 
         <section className="py-10 bg-background">
           <div className="container mx-auto px-4">
+            <PrintingService />
+
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-display text-2xl font-bold text-foreground">Produtos disponíveis</h2>
               <Sheet open={openCart} onOpenChange={setOpenCart}>
