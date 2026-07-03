@@ -29,8 +29,9 @@ type Color = "pb" | "color";
 type Face = "frente" | "frente_verso";
 type Delivery = "retirada" | "local" | "correio";
 
-const LOCAL_FEE_CENTS = 1000; // R$ 10 entrega local Itajubá
+const LOCAL_FEE_CENTS = 1000; // R$ 10 entrega local São Pedro da União - MG
 const CORREIO_FEE_CENTS = 1500; // R$ 15 envio Correios simples (envelope)
+const PICKUP_LOCATION = "São Pedro da União - MG";
 
 const PrintingService = () => {
   const [color, setColor] = useState<Color>("pb");
