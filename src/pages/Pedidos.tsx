@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { toast } from "sonner";
 import { ShoppingCart, Plus, Minus, Trash2, Truck, MessageCircle, Package } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import PrintingService from "@/components/PrintingService";
 
 type Product = Tables<"shop_products">;
 
