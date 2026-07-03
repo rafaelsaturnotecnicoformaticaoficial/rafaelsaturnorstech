@@ -133,7 +133,7 @@ const PrintingService = () => {
           ? `Retirada na loja — ${PICKUP_LOCATION} (grátis)`
           : delivery === "local"
           ? `Entrega em ${PICKUP_LOCATION} (${brl(LOCAL_FEE_CENTS)})`
-          : `Envio por Correios (${brl(CORREIO_FEE_CENTS)})`
+          : `Correios (${freteSelected?.company} ${freteSelected?.name} — ${brl(freteSelected?.price_cents ?? 0)}, ~${freteSelected?.delivery_days ?? 0} dias)`
       }`,
       delivery !== "retirada" ? `Endereço: ${address}` : "",
       "",
