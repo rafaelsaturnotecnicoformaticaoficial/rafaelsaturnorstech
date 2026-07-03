@@ -33,7 +33,6 @@ type Face = "frente" | "frente_verso";
 type Delivery = "retirada" | "local" | "correio";
 
 const LOCAL_FEE_CENTS = 1000; // R$ 10 entrega local São Pedro da União - MG
-const CORREIO_FEE_CENTS = 1500; // R$ 15 envio Correios simples (envelope)
 const PICKUP_LOCATION = "São Pedro da União - MG";
 
 const PrintingService = () => {
@@ -44,7 +43,11 @@ const PrintingService = () => {
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [address, setAddress] = useState("");
+  const [cep, setCep] = useState("");
   const [notes, setNotes] = useState("");
+  const [freteOptions, setFreteOptions] = useState<FreteOption[] | null>(null);
+  const [freteSelected, setFreteSelected] = useState<FreteOption | null>(null);
+  const [loadingFrete, setLoadingFrete] = useState(false);
 
   const sheets = Math.max(1, qty);
   const pagesPerSheet = face === "frente" ? 1 : 2;
