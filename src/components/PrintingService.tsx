@@ -4,11 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Printer, MessageCircle, Truck } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const BUSINESS_WHATSAPP = "5535998793630";
 
 const brl = (cents: number) =>
   (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+type FreteOption = { id: string; name: string; company: string; price_cents: number; delivery_days: number };
 
 // Preços por folha (em centavos). Faixas: 1-10, 11-50, 51-200, 201+
 const PRICES = {
