@@ -232,7 +232,7 @@ const PrintingService = () => {
                 [
                   { v: "retirada", label: `Retirar na loja — ${PICKUP_LOCATION}`, price: "Grátis" },
                   { v: "local", label: `Entrega em ${PICKUP_LOCATION}`, price: brl(LOCAL_FEE_CENTS) },
-                  { v: "correio", label: "Envio pelos Correios", price: brl(CORREIO_FEE_CENTS) },
+                  { v: "correio", label: "Envio pelos Correios (SuperFrete)", price: freteSelected ? brl(freteSelected.price_cents) : "Calcular" },
                 ] as { v: Delivery; label: string; price: string }[]
               ).map((opt) => (
                 <label
@@ -256,6 +256,33 @@ const PrintingService = () => {
                 </label>
               ))}
             </div>
+
+            {delivery === "correio" && (
+              <div className="mt-3 border border-border rounded-lg p-3 space-y-2 bg-muted/30">
+                <div className="flex gap-2 items-end">
+                  <div className="flex-1">
+                    <Label className="text-xs">CEP de destino</Label>
+                    <Input value={cep} onChange={(e) => setCep(e.target.value)} placeholder="00000-000" />
+                  </div>
+                  <Button variant="outline" size="sm" onClick={calcularFreteCorreios} disabled={loadingFrete}>
+                    {loadingFrete ? "Calculando..." : "Calcular"}
+                  </Button>
+                </div>
+                {freteOptions && (
+                  <div className="space-y-1">
+                    {freteOptions.map((o) => (
+                      <label key={o.id} className={`flex items-center justify-between p-2 rounded border cursor-pointer text-xs ${freteSelected?.id === o.id ? "border-primary bg-primary/5" : "border-border"}`}>
+                        <span className="flex items-center gap-2">
+                          <input type="radio" name="printing-frete" checked={freteSelected?.id === o.id} onChange={() => setFreteSelected(o)} />
+                          <span>{o.company} — {o.name} <span className="text-muted-foreground">(~{o.delivery_days}d)</span></span>
+                        </span>
+                        <span className="font-semibold text-primary">{brl(o.price_cents)}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
