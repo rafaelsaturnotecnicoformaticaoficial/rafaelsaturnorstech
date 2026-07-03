@@ -60,8 +60,45 @@ const PrintingService = () => {
 
   const subtotal = unit * sheets;
   const shipping =
-    delivery === "retirada" ? 0 : delivery === "local" ? LOCAL_FEE_CENTS : CORREIO_FEE_CENTS;
+    delivery === "retirada"
+      ? 0
+      : delivery === "local"
+      ? LOCAL_FEE_CENTS
+      : freteSelected?.price_cents ?? 0;
   const total = subtotal + shipping;
+
+  const calcularFreteCorreios = async () => {
+    const cepClean = cep.replace(/\D/g, "");
+    if (cepClean.length !== 8) {
+      toast.error("Informe um CEP válido");
+      return;
+    }
+    setLoadingFrete(true);
+    setFreteOptions(null);
+    setFreteSelected(null);
+    try {
+      // Papel A4 75g/m² ≈ 5g/folha. Envelope/pacote pequeno.
+      const totalWeight = Math.max(100, sheets * 5);
+      const items = [{
+        weight_g: totalWeight,
+        width_cm: 22,
+        height_cm: Math.max(2, Math.ceil(sheets / 100)),
+        length_cm: 32,
+        quantity: 1,
+      }];
+      const { data, error } = await supabase.functions.invoke("calcular-frete", {
+        body: { cep_destino: cepClean, items },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const opts = (data as any).options as FreteOption[];
+      if (!opts?.length) { toast.error("Nenhuma opção de frete disponível"); return; }
+      setFreteOptions(opts);
+      setFreteSelected(opts[0]);
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao calcular frete");
+    } finally { setLoadingFrete(false); }
+  };
 
   const enviar = () => {
     if (!name.trim() || !whatsapp.trim()) {
@@ -72,6 +109,11 @@ const PrintingService = () => {
       toast.error("Informe o endereço de entrega");
       return;
     }
+    if (delivery === "correio" && !freteSelected) {
+      toast.error("Calcule e selecione o frete dos Correios");
+      return;
+    }
+
 
     const lines = [
       "*Pedido — Impressão / Xerox — RS Tech*",
