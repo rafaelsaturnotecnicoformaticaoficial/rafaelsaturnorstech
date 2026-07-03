@@ -43,12 +43,16 @@ const PrintingService = () => {
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
 
-  const unit = useMemo(() => {
-    const q = Math.max(1, qty);
-    return PRICES[color][face][tierIndex(q)];
-  }, [color, face, qty]);
+  const sheets = Math.max(1, qty);
+  const pagesPerSheet = face === "frente" ? 1 : 2;
+  const pages = sheets * pagesPerSheet;
 
-  const subtotal = unit * Math.max(1, qty);
+  const unit = useMemo(
+    () => PRICES[color][face][tierIndex(sheets)],
+    [color, face, sheets],
+  );
+
+  const subtotal = unit * sheets;
   const shipping =
     delivery === "retirada" ? 0 : delivery === "local" ? LOCAL_FEE_CENTS : CORREIO_FEE_CENTS;
   const total = subtotal + shipping;
@@ -71,15 +75,16 @@ const PrintingService = () => {
       "",
       `Tipo: ${color === "pb" ? "Preto e Branco" : "Colorida"}`,
       `Impressão: ${face === "frente" ? "Frente" : "Frente e Verso"}`,
-      `Quantidade: ${qty} folha(s)`,
+      `Folhas: ${sheets}`,
+      `Páginas impressas: ${pages} (${pagesPerSheet} por folha)`,
       `Valor por folha: ${brl(unit)}`,
       `Subtotal: ${brl(subtotal)}`,
       "",
       `Entrega: ${
         delivery === "retirada"
-          ? "Retirada no local (grátis)"
+          ? `Retirada na loja — ${PICKUP_LOCATION} (grátis)`
           : delivery === "local"
-          ? `Entrega em Itajubá (${brl(LOCAL_FEE_CENTS)})`
+          ? `Entrega em ${PICKUP_LOCATION} (${brl(LOCAL_FEE_CENTS)})`
           : `Envio por Correios (${brl(CORREIO_FEE_CENTS)})`
       }`,
       delivery !== "retirada" ? `Endereço: ${address}` : "",
@@ -97,6 +102,7 @@ const PrintingService = () => {
     );
     toast.success("Pedido enviado! Envie o arquivo pelo WhatsApp.");
   };
+
 
   return (
     <section className="mb-8 bg-card border-2 border-primary/30 rounded-2xl overflow-hidden shadow-md">
