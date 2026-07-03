@@ -4,11 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Printer, MessageCircle, Truck } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const BUSINESS_WHATSAPP = "5535998793630";
 
 const brl = (cents: number) =>
   (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+type FreteOption = { id: string; name: string; company: string; price_cents: number; delivery_days: number };
 
 // Preços por folha (em centavos). Faixas: 1-10, 11-50, 51-200, 201+
 const PRICES = {
@@ -30,7 +33,6 @@ type Face = "frente" | "frente_verso";
 type Delivery = "retirada" | "local" | "correio";
 
 const LOCAL_FEE_CENTS = 1000; // R$ 10 entrega local São Pedro da União - MG
-const CORREIO_FEE_CENTS = 1500; // R$ 15 envio Correios simples (envelope)
 const PICKUP_LOCATION = "São Pedro da União - MG";
 
 const PrintingService = () => {
@@ -41,7 +43,11 @@ const PrintingService = () => {
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [address, setAddress] = useState("");
+  const [cep, setCep] = useState("");
   const [notes, setNotes] = useState("");
+  const [freteOptions, setFreteOptions] = useState<FreteOption[] | null>(null);
+  const [freteSelected, setFreteSelected] = useState<FreteOption | null>(null);
+  const [loadingFrete, setLoadingFrete] = useState(false);
 
   const sheets = Math.max(1, qty);
   const pagesPerSheet = face === "frente" ? 1 : 2;
@@ -54,8 +60,45 @@ const PrintingService = () => {
 
   const subtotal = unit * sheets;
   const shipping =
-    delivery === "retirada" ? 0 : delivery === "local" ? LOCAL_FEE_CENTS : CORREIO_FEE_CENTS;
+    delivery === "retirada"
+      ? 0
+      : delivery === "local"
+      ? LOCAL_FEE_CENTS
+      : freteSelected?.price_cents ?? 0;
   const total = subtotal + shipping;
+
+  const calcularFreteCorreios = async () => {
+    const cepClean = cep.replace(/\D/g, "");
+    if (cepClean.length !== 8) {
+      toast.error("Informe um CEP válido");
+      return;
+    }
+    setLoadingFrete(true);
+    setFreteOptions(null);
+    setFreteSelected(null);
+    try {
+      // Papel A4 75g/m² ≈ 5g/folha. Envelope/pacote pequeno.
+      const totalWeight = Math.max(100, sheets * 5);
+      const items = [{
+        weight_g: totalWeight,
+        width_cm: 22,
+        height_cm: Math.max(2, Math.ceil(sheets / 100)),
+        length_cm: 32,
+        quantity: 1,
+      }];
+      const { data, error } = await supabase.functions.invoke("calcular-frete", {
+        body: { cep_destino: cepClean, items },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const opts = (data as any).options as FreteOption[];
+      if (!opts?.length) { toast.error("Nenhuma opção de frete disponível"); return; }
+      setFreteOptions(opts);
+      setFreteSelected(opts[0]);
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao calcular frete");
+    } finally { setLoadingFrete(false); }
+  };
 
   const enviar = () => {
     if (!name.trim() || !whatsapp.trim()) {
@@ -66,6 +109,11 @@ const PrintingService = () => {
       toast.error("Informe o endereço de entrega");
       return;
     }
+    if (delivery === "correio" && !freteSelected) {
+      toast.error("Calcule e selecione o frete dos Correios");
+      return;
+    }
+
 
     const lines = [
       "*Pedido — Impressão / Xerox — RS Tech*",
@@ -85,7 +133,7 @@ const PrintingService = () => {
           ? `Retirada na loja — ${PICKUP_LOCATION} (grátis)`
           : delivery === "local"
           ? `Entrega em ${PICKUP_LOCATION} (${brl(LOCAL_FEE_CENTS)})`
-          : `Envio por Correios (${brl(CORREIO_FEE_CENTS)})`
+          : `Correios (${freteSelected?.company} ${freteSelected?.name} — ${brl(freteSelected?.price_cents ?? 0)}, ~${freteSelected?.delivery_days ?? 0} dias)`
       }`,
       delivery !== "retirada" ? `Endereço: ${address}` : "",
       "",
@@ -184,7 +232,7 @@ const PrintingService = () => {
                 [
                   { v: "retirada", label: `Retirar na loja — ${PICKUP_LOCATION}`, price: "Grátis" },
                   { v: "local", label: `Entrega em ${PICKUP_LOCATION}`, price: brl(LOCAL_FEE_CENTS) },
-                  { v: "correio", label: "Envio pelos Correios", price: brl(CORREIO_FEE_CENTS) },
+                  { v: "correio", label: "Envio pelos Correios (SuperFrete)", price: freteSelected ? brl(freteSelected.price_cents) : "Calcular" },
                 ] as { v: Delivery; label: string; price: string }[]
               ).map((opt) => (
                 <label
@@ -208,6 +256,33 @@ const PrintingService = () => {
                 </label>
               ))}
             </div>
+
+            {delivery === "correio" && (
+              <div className="mt-3 border border-border rounded-lg p-3 space-y-2 bg-muted/30">
+                <div className="flex gap-2 items-end">
+                  <div className="flex-1">
+                    <Label className="text-xs">CEP de destino</Label>
+                    <Input value={cep} onChange={(e) => setCep(e.target.value)} placeholder="00000-000" />
+                  </div>
+                  <Button variant="outline" size="sm" onClick={calcularFreteCorreios} disabled={loadingFrete}>
+                    {loadingFrete ? "Calculando..." : "Calcular"}
+                  </Button>
+                </div>
+                {freteOptions && (
+                  <div className="space-y-1">
+                    {freteOptions.map((o) => (
+                      <label key={o.id} className={`flex items-center justify-between p-2 rounded border cursor-pointer text-xs ${freteSelected?.id === o.id ? "border-primary bg-primary/5" : "border-border"}`}>
+                        <span className="flex items-center gap-2">
+                          <input type="radio" name="printing-frete" checked={freteSelected?.id === o.id} onChange={() => setFreteSelected(o)} />
+                          <span>{o.company} — {o.name} <span className="text-muted-foreground">(~{o.delivery_days}d)</span></span>
+                        </span>
+                        <span className="font-semibold text-primary">{brl(o.price_cents)}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
