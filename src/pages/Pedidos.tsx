@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { toast } from "sonner";
 import { ShoppingCart, Plus, Minus, Trash2, Truck, MessageCircle, Package } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
-import PrintingService from "@/components/PrintingService";
+
 
 type Product = Tables<"shop_products">;
 
@@ -95,7 +95,7 @@ const Pedidos = () => {
 
         <section className="py-10 bg-background">
           <div className="container mx-auto px-4">
-            <PrintingService />
+
 
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-display text-2xl font-bold text-foreground">Produtos disponíveis</h2>

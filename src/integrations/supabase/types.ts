@@ -277,6 +277,51 @@ export type Database = {
         }
         Relationships: []
       }
+      printing_settings: {
+        Row: {
+          color_frente: number[]
+          color_frente_verso: number[]
+          enable_correio: boolean
+          enable_local: boolean
+          enable_pickup: boolean
+          id: number
+          local_fee_cents: number
+          pb_frente: number[]
+          pb_frente_verso: number[]
+          pickup_location: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          color_frente?: number[]
+          color_frente_verso?: number[]
+          enable_correio?: boolean
+          enable_local?: boolean
+          enable_pickup?: boolean
+          id?: number
+          local_fee_cents?: number
+          pb_frente?: number[]
+          pb_frente_verso?: number[]
+          pickup_location?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Update: {
+          color_frente?: number[]
+          color_frente_verso?: number[]
+          enable_correio?: boolean
+          enable_local?: boolean
+          enable_pickup?: boolean
+          id?: number
+          local_fee_cents?: number
+          pb_frente?: number[]
+          pb_frente_verso?: number[]
+          pickup_location?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
