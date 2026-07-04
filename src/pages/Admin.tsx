@@ -9,10 +9,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload, Pencil, FileText, Store } from "lucide-react";
+import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload, Pencil, FileText, Store, Printer } from "lucide-react";
 import SupportersTab from "@/components/admin/SupportersTab";
 import BudgetsTab from "@/components/admin/BudgetsTab";
 import ShopTab from "@/components/admin/ShopTab";
+import PrintingTab from "@/components/admin/PrintingTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import logo from "@/assets/logo.png";
@@ -75,6 +76,7 @@ const Admin = () => {
             <TabsTrigger value="partners" className="gap-1"><Handshake size={14} /> Parceiros</TabsTrigger>
             <TabsTrigger value="supporters" className="gap-1"><Heart size={14} /> Apoio e Social</TabsTrigger>
             <TabsTrigger value="shop" className="gap-1"><Store size={14} /> Loja</TabsTrigger>
+            <TabsTrigger value="printing" className="gap-1"><Printer size={14} /> Impressão</TabsTrigger>
             <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Recomendados</TabsTrigger>
             <TabsTrigger value="adsense" className="gap-1"><Code size={14} /> Anúncios</TabsTrigger>
             <TabsTrigger value="budgets" className="gap-1"><FileText size={14} /> Orçamentos</TabsTrigger>
@@ -83,6 +85,7 @@ const Admin = () => {
           <TabsContent value="partners"><PartnersTab /></TabsContent>
           <TabsContent value="supporters"><SupportersTab /></TabsContent>
           <TabsContent value="shop"><ShopTab /></TabsContent>
+          <TabsContent value="printing"><PrintingTab /></TabsContent>
           <TabsContent value="products"><ProductsTab /></TabsContent>
           <TabsContent value="adsense"><AdsenseTab /></TabsContent>
           <TabsContent value="budgets"><BudgetsTab /></TabsContent>

@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PrintingService from "@/components/PrintingService";
 import { ShoppingBag, ExternalLink, ArrowRight } from "lucide-react";
 
 const categorias = [
@@ -71,6 +72,7 @@ const Loja = () => {
         {/* Categorias */}
         <section className="py-14 bg-background">
           <div className="container mx-auto px-4">
+            <PrintingService />
             <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground text-center mb-8">
               Categorias em <span className="text-primary">Destaque</span>
             </h2>
