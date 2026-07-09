@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { toast } from "sonner";
-import { ShoppingCart, Plus, Minus, Trash2, Truck, MessageCircle, Package } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2, Truck, CreditCard, Package } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
 
