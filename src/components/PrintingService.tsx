@@ -267,10 +267,10 @@ const PrintingService = () => {
             <div className="col-span-2"><Label className="text-xs">Observação (opcional)</Label><Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Ex: colorido só nas páginas 3 e 7" /></div>
           </div>
 
-          <Button className="w-full bg-green-600 hover:bg-green-700 text-white" size="lg" onClick={enviar}>
-            <MessageCircle size={16} /> Pedir pelo WhatsApp
+          <Button className="w-full" size="lg" onClick={enviar} disabled={payLoading}>
+            <CreditCard size={16} /> {payLoading ? "Gerando pagamento..." : "Pagar no Mercado Pago"}
           </Button>
-          <p className="text-[11px] text-muted-foreground text-center">Envie o arquivo (PDF, DOC ou imagem) pelo WhatsApp após confirmar o pedido.</p>
+          <p className="text-[11px] text-muted-foreground text-center">Após o pagamento, envie o arquivo (PDF, DOC ou imagem) pelo WhatsApp {BUSINESS_WHATSAPP}.</p>
         </div>
       </div>
     </section>
