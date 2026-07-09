@@ -383,8 +383,8 @@ const CartSheet = ({
 
           <div className="flex gap-2">
             <Button variant="outline" className="flex-1" onClick={() => setStep("cart")}>Voltar</Button>
-            <Button className="flex-1 bg-green-600 hover:bg-green-700 text-white" onClick={finalizar} disabled={submitting || !freteSelected}>
-              <MessageCircle size={16} /> {submitting ? "Enviando..." : "Enviar via WhatsApp"}
+            <Button className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={finalizar} disabled={submitting || !freteSelected}>
+              <CreditCard size={16} /> {submitting ? "Gerando pagamento..." : "Pagar no Mercado Pago"}
             </Button>
           </div>
         </div>
