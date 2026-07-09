@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Printer, MessageCircle, Truck } from "lucide-react";
+import { Printer, CreditCard, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -107,33 +107,53 @@ const PrintingService = () => {
     } finally { setLoadingFrete(false); }
   };
 
-  const enviar = () => {
+  const [payLoading, setPayLoading] = useState(false);
+
+  const enviar = async () => {
     if (!name.trim() || !whatsapp.trim()) { toast.error("Preencha seu nome e WhatsApp"); return; }
     if (delivery !== "retirada" && !address.trim()) { toast.error("Informe o endereço de entrega"); return; }
     if (delivery === "correio" && !freteSelected) { toast.error("Calcule e selecione o frete dos Correios"); return; }
+    if (total < 100) { toast.error("Valor mínimo de R$ 1,00"); return; }
 
-    const lines = [
-      "*Pedido — Impressão / Xerox — RS Tech*", "",
-      `*Cliente:* ${name}`, `WhatsApp: ${whatsapp}`, "",
-      `Tipo: ${color === "pb" ? "Preto e Branco" : "Colorida"}`,
-      `Impressão: ${face === "frente" ? "Frente" : "Frente e Verso"}`,
-      `Folhas: ${sheets}`,
-      `Páginas impressas: ${pages} (${pagesPerSheet} por folha)`,
-      `Valor por folha: ${brl(unit)}`,
-      `Subtotal: ${brl(subtotal)}`, "",
-      `Entrega: ${
-        delivery === "retirada" ? `Retirada na loja — ${PICKUP_LOCATION} (grátis)`
-        : delivery === "local" ? `Entrega em ${PICKUP_LOCATION} (${brl(LOCAL_FEE_CENTS)})`
-        : `Correios (${freteSelected?.company} ${freteSelected?.name} — ${brl(freteSelected?.price_cents ?? 0)}, ~${freteSelected?.delivery_days ?? 0} dias)`
-      }`,
-      delivery !== "retirada" ? `Endereço: ${address}` : "", "",
-      `*Total: ${brl(total)}*`,
-      notes ? `\nObs: ${notes}` : "",
-      "\nVou enviar o arquivo (PDF/DOC/imagem) por aqui.",
-    ].filter(Boolean).join("\n");
+    const entrega =
+      delivery === "retirada" ? `Retirada em ${PICKUP_LOCATION}`
+      : delivery === "local" ? `Entrega em ${PICKUP_LOCATION}`
+      : `Correios ${freteSelected?.company} ${freteSelected?.name}`;
 
-    window.open(`https://wa.me/${BUSINESS_WHATSAPP}?text=${encodeURIComponent(lines)}`, "_blank");
-    toast.success("Pedido enviado! Envie o arquivo pelo WhatsApp.");
+    const desc = `Impressão ${color === "pb" ? "P&B" : "Colorida"} ${face === "frente" ? "frente" : "frente/verso"} - ${sheets} folha(s) - ${entrega}`;
+
+    setPayLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("mercadopago-preference", {
+        body: {
+          title: desc.slice(0, 240),
+          amount_cents: total,
+          payer: { name, phone: { number: whatsapp } },
+          back_url: `${window.location.origin}/loja`,
+        },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const initPoint = (data as any).init_point || (data as any).sandbox_init_point;
+      if (!initPoint) throw new Error("Link de pagamento indisponível");
+
+      // Salva resumo pra o cliente enviar o arquivo depois no WhatsApp
+      const resumo = [
+        "Pedido Impressão RS Tech",
+        `Cliente: ${name} (${whatsapp})`,
+        `${desc}`,
+        delivery !== "retirada" ? `Endereço: ${address}` : "",
+        notes ? `Obs: ${notes}` : "",
+        `Total pago: ${brl(total)}`,
+        `WhatsApp para envio do arquivo: ${BUSINESS_WHATSAPP}`,
+      ].filter(Boolean).join("\n");
+      try { localStorage.setItem("rstech_last_print_order", resumo); } catch {}
+
+      toast.success("Redirecionando para o Mercado Pago...");
+      window.location.href = initPoint;
+    } catch (e: any) {
+      toast.error(e.message || "Falha ao gerar pagamento");
+    } finally { setPayLoading(false); }
   };
 
   const deliveryOpts = [
@@ -247,10 +267,10 @@ const PrintingService = () => {
             <div className="col-span-2"><Label className="text-xs">Observação (opcional)</Label><Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Ex: colorido só nas páginas 3 e 7" /></div>
           </div>
 
-          <Button className="w-full bg-green-600 hover:bg-green-700 text-white" size="lg" onClick={enviar}>
-            <MessageCircle size={16} /> Pedir pelo WhatsApp
+          <Button className="w-full" size="lg" onClick={enviar} disabled={payLoading}>
+            <CreditCard size={16} /> {payLoading ? "Gerando pagamento..." : "Pagar no Mercado Pago"}
           </Button>
-          <p className="text-[11px] text-muted-foreground text-center">Envie o arquivo (PDF, DOC ou imagem) pelo WhatsApp após confirmar o pedido.</p>
+          <p className="text-[11px] text-muted-foreground text-center">Após o pagamento, envie o arquivo (PDF, DOC ou imagem) pelo WhatsApp {BUSINESS_WHATSAPP}.</p>
         </div>
       </div>
     </section>
