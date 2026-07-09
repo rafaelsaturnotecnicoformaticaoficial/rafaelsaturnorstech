@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.criar-pedido]
 verify_jwt = false
+
+[functions.mercadopago-preference]
+verify_jwt = false
