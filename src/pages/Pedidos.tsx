@@ -258,39 +258,33 @@ const CartSheet = ({
       if ((data as any)?.error) throw new Error((data as any).error);
 
       const orderId = (data as any).order_id as string;
+      const totalCents = (data as any).total_cents as number;
 
-      const lines = [
-        `*Novo Pedido — RS Tech Loja*`,
-        `Nº: ${orderId.slice(0, 8)}`,
-        ``,
-        `*Cliente:* ${customer.name}`,
-        `E-mail: ${customer.email}`,
-        `WhatsApp: ${customer.whatsapp}`,
-        ``,
-        `*Endereço:*`,
-        `${customer.address}${customer.number ? ", " + customer.number : ""}${customer.complement ? " - " + customer.complement : ""}`,
-        `${customer.neighborhood || ""} - ${customer.city || ""}/${customer.state || ""}`,
-        `CEP ${customer.cep}`,
-        ``,
-        `*Itens:*`,
-        ...cart.map((c) => {
-          const p = products.get(c.product_id)!;
-          return `• ${c.quantity}x ${p.name} - ${brl(p.price_cents * c.quantity)}`;
-        }),
-        ``,
-        `Subtotal: ${brl(subtotal)}`,
-        `Frete (${freteSelected.company} - ${freteSelected.name}, ~${freteSelected.delivery_days} dias): ${brl(freteSelected.price_cents)}`,
-        `*Total: ${brl(total)}*`,
-        notes ? `\nObs: ${notes}` : "",
-      ].filter(Boolean).join("\n");
+      const mp = await supabase.functions.invoke("mercadopago-preference", {
+        body: {
+          title: `Pedido RS Tech #${orderId.slice(0, 8)}`,
+          amount_cents: totalCents,
+          external_reference: orderId,
+          payer: {
+            name: customer.name,
+            email: customer.email,
+            phone: { number: customer.whatsapp },
+          },
+          back_url: `${window.location.origin}/pedidos`,
+        },
+      });
+      if (mp.error) throw mp.error;
+      if ((mp.data as any)?.error) throw new Error((mp.data as any).error);
 
-      const url = `https://wa.me/${BUSINESS_WHATSAPP}?text=${encodeURIComponent(lines)}`;
-      window.open(url, "_blank");
-      toast.success("Pedido registrado! Combine o pagamento pelo WhatsApp.");
+      const initPoint = (mp.data as any).init_point || (mp.data as any).sandbox_init_point;
+      if (!initPoint) throw new Error("Link de pagamento indisponível");
+
+      toast.success("Redirecionando para o Mercado Pago...");
       clearCart();
       setStep("cart");
       setFreteOptions(null); setFreteSelected(null);
       onClose();
+      window.location.href = initPoint;
     } catch (e: any) {
       toast.error(e.message || "Falha ao criar pedido");
     } finally { setSubmitting(false); }
