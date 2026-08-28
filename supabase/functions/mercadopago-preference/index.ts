@@ -59,11 +59,17 @@ Deno.serve(async (req) => {
     const text = await resp.text();
     if (!resp.ok) {
       console.error('MP error', resp.status, text);
+      const invalidCreds = resp.status === 401 || resp.status === 403;
       return new Response(
-        JSON.stringify({ error: 'Falha ao criar preferência no Mercado Pago', detail: text }),
-        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        JSON.stringify({
+          error: invalidCreds
+            ? 'Access Token do Mercado Pago inválido ou sem permissão para Checkout Pro. Gere um novo Access Token de produção no painel de desenvolvedores do Mercado Pago e salve novamente.'
+            : 'Falha ao criar preferência no Mercado Pago. Tente novamente em instantes.',
+        }),
+        { status: invalidCreds ? 503 : 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
+
 
     const data = JSON.parse(text);
     return new Response(
