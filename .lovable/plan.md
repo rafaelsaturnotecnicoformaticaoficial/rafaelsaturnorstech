@@ -1,102 +1,44 @@
-## Visão geral
+## Objetivo
 
-Criar uma página `/pedidos` no site da RS Tech com:
-- Catálogo de produtos físicos administrável pelo admin
-- Carrinho de compras (estado local)
-- Cálculo de frete em tempo real via API do SuperFrete (CEP destino → CEP origem 37855-000)
-- Checkout com Stripe (cartão + Pix), Stripe gerenciando os impostos
-- Painel de pedidos no admin com status
+Transformar o site atual da RS Tech em loja completa (produtos, produtos digitais, serviços, agendamento, login, pedidos, upload de arquivos e envio ao WhatsApp), mantendo tudo o que já existe (home, Loja/impressão, Shopee, Blog, Suporte Remoto, admin atual).
 
-## Passo 1 — Ativar Stripe (built-in Lovable)
+## Entrega em 4 etapas (cada uma testada antes da próxima)
 
-Vou chamar `enable_stripe_payments`. Você só precisa preencher o formulário (e-mail, nome do negócio). Ambiente **teste** fica disponível na hora; aceitar pagamentos reais exige reivindicar a conta depois.
+### Etapa 1 — Base: cadastro, categorias, produtos e serviços
+- Login do cliente: Entrar, Criar conta (nome, e-mail, WhatsApp, cidade, estado, senha), Esqueci minha senha + página de redefinição. Login com Google continua.
+- Categorias editáveis (iniciais: Informática, Acessórios, Cabos, Armazenamento, Periféricos, Impressão, Produtos Digitais, Outros).
+- Produtos: foto, nome, descrição, categoria, preço, estoque, ativo, tipo físico/digital, "aceita arquivo do cliente".
+- Serviços: foto, nome, descrição, categoria, preço, prazo (5 dias úteis / 10 dias úteis / personalizado / sob consulta), duração, ativo, agendável SIM/NÃO, campos de personalização (ex.: Topper de bolo: nome, idade, tema, cores, texto).
+- Página pública "Produtos e Serviços": preços escondidos para quem não entrou, com aviso "Faça login ou crie sua conta para visualizar o preço."
+- Texto "Prazo estimado: até X dias úteis" calculado sem sábados, domingos e feriados.
 
-Configuração de impostos: **cálculo e coleta de impostos (+0,5%)** — o Stripe calcula no checkout, você cuida da emissão/recolhimento.
+### Etapa 2 — Carrinho, upload e pedido
+- Carrinho único para produtos, digitais e serviços (foto, nome, quantidade, preço, subtotal, remover).
+- Envio de JPG/JPEG/PNG/PDF (até 10 MB) por item, direto do celular; arquivos privados, só o dono e o admin veem.
+- Checkout com dados preenchidos automaticamente; recebimento: Retirada em São Pedro da União - MG (sem frete) ou Outra cidade (botão "Consultar frete pelo WhatsApp" com mensagem pronta).
+- Pagamento: PIX, Dinheiro, Débito, Crédito (só registra, sem cobrança online).
+- Resumo final, botão FINALIZAR PEDIDO, número automático #0001, #0002..., e abertura do WhatsApp (35) 99879-3630 com o modelo enviado.
 
-## Passo 2 — Banco de dados (Lovable Cloud)
+### Etapa 3 — Agendamento
+- Horários configuráveis por dia da semana (padrão seg–sex 09:00–11:00 e 13:00–16:00, intervalos de 30 min; sáb/dom fechados).
+- Feriados cadastráveis; bloqueiam calendário e não contam como dia útil.
+- Calendário visual só com datas/horários livres; o banco impede dois clientes no mesmo horário.
+- Admin pode bloquear horários específicos.
 
-Novas tabelas:
+### Etapa 4 — Área do cliente e painel admin
+- Cliente: Meus Pedidos, Meus Agendamentos, Meus Dados.
+- Admin (novas abas no painel existente): Dashboard, Produtos, Serviços, Categorias, Pedidos (status, arquivos), Agendamentos (confirmar, cancelar, remarcar, concluir, bloquear horário), Clientes (contagem de pedidos/agendamentos, nunca senha), Arquivos, Feriados, Horários, Configurações (empresa, cidade, WhatsApp, retirada, texto de frete).
+- Status de pedido: Aguardando confirmação, Confirmado, Em produção, Pronto, Aguardando retirada, Concluído, Cancelado.
+- Status de agendamento: Solicitado, Confirmado, Agendado, Em atendimento, Concluído, Cancelado.
 
-- `shop_products` — nome, descrição, preço (centavos), imagem, estoque, peso (g), altura/largura/comprimento (cm), tax_code Stripe, ativo
-- `shop_orders` — usuário (opcional), nome, e-mail, whatsapp, CEP, endereço completo, subtotal, frete, total, serviço de frete escolhido, stripe_session_id, status (`pendente`, `pago`, `enviado`, `entregue`, `cancelado`), código de rastreio
-- `shop_order_items` — order_id, product_id, snapshot do nome/preço, quantidade
-
-RLS:
-- Produtos: leitura pública; escrita só admin
-- Pedidos / itens: cliente vê os próprios; admin vê tudo; criação via edge function (service role)
-
-## Passo 3 — SuperFrete
-
-Vou pedir seu token via `add_secret` (`SUPERFRETE_TOKEN`).
-
-Edge function `calcular-frete`:
-- Recebe CEP destino + itens (peso e dimensões totais)
-- Chama `https://api.superfrete.com/api/v0/calculator` com origem **37855-000**
-- Retorna lista de serviços (PAC, SEDEX, Mini Envios) com preço e prazo
-
-## Passo 4 — Checkout Stripe
-
-Edge function `criar-pedido-checkout`:
-- Valida itens, recalcula totais no servidor (nunca confia em preço do cliente)
-- Cria registro `shop_orders` como `pendente`
-- Cria Stripe Checkout Session com:
-  - Line items dos produtos
-  - Linha extra de "Frete" como `shipping_options`
-  - `automatic_tax: { enabled: true }`
-  - `customer_email`, metadata com `order_id`
-  - URLs de sucesso e cancelamento
-- Retorna URL do Stripe → abre em nova aba
-
-Edge function `stripe-webhook` (verify_jwt = false):
-- Recebe `checkout.session.completed`
-- Marca pedido como `pago`, baixa estoque
-
-## Passo 5 — UI
-
-**`/pedidos`** (pública):
-- Grid de produtos com foto, nome, preço, botão "Adicionar"
-- Drawer de carrinho lateral com itens, quantidade, subtotal
-- Formulário: nome, e-mail, WhatsApp, CEP (busca ViaCEP) + endereço, número, complemento
-- Botão "Calcular frete" → mostra opções SuperFrete
-- Botão "Pagar com Stripe" → redireciona pro checkout
-
-**`/pedidos/sucesso`** e **`/pedidos/cancelado`** — telas de retorno
-
-**Admin** — nova aba **Loja** com 2 sub-seções:
-- **Produtos**: CRUD com upload de imagem, estoque, dimensões, peso
-- **Pedidos**: lista com filtros (status, data), detalhes do pedido, botões para marcar como enviado / cancelar e campo de código de rastreio
-
-## Passo 6 — Header
-
-Adicionar link "Loja" no menu (ou renomear o atual `/loja` que aponta pra Magazine Luiza para "Magazine Luiza" e usar "Loja" para a nova).
+## Pontos que mudam o que existe hoje
+- O Suporte Remoto hoje agenda só segunda e sexta; o novo pedido diz segunda a sexta. Vou seguir o novo (seg–sex), ajustável no admin.
+- A loja atual em /pedidos (frete SuperFrete + Mercado Pago, que está com erro de autorização) será substituída pelo novo checkout com retirada/WhatsApp. A impressão em /loja continua como está.
 
 ## Detalhes técnicos
-
-- Stack atual: React + Vite + Supabase + Tailwind/shadcn (sem mudanças)
-- Stripe SDK em edge function via `npm:stripe@17`
-- SuperFrete: fetch direto (REST), header `Authorization: Bearer <token>`, `User-Agent` obrigatório
-- Preços sempre em **centavos** no banco; conversão pra reais só na UI
-- Webhook Stripe precisa de `STRIPE_WEBHOOK_SECRET` (te peço depois de ativar)
-- Carrinho persiste no `localStorage`
-
-## Ordem de execução
-
-1. Confirmar este plano
-2. `enable_stripe_payments` (você preenche o formulário)
-3. Migration das tabelas
-4. `add_secret` do `SUPERFRETE_TOKEN`
-5. Edge functions (frete, checkout, webhook)
-6. Páginas e admin
-7. Cadastrar produtos de teste e testar fluxo completo no ambiente sandbox
-
-## O que **fica de fora** desta primeira versão
-
-- Cupons de desconto
-- Múltiplos endereços salvos por cliente
-- Devoluções / estorno automático
-- Geração de etiqueta direto no SuperFrete (só cálculo; etiqueta você compra no painel deles)
-- Rastreamento automático do código
-
-Posso adicionar qualquer um depois.
-
-Confirma para eu começar pelo passo 2 (ativar Stripe)?
+- Novas tabelas: categories, catalog_items (produto/serviço, tipo, prazo, agendável, campos personalizados), orders (+ sequência para número), order_items, order_files, appointments (índice único em data+horário quando não cancelado), holidays, business_hours, blocked_slots, store_settings. Reaproveita profiles, user_roles/has_role.
+- RLS: cliente só lê/escreve os próprios pedidos, itens, arquivos e agendamentos; admin via has_role; catálogo leitura pública mas preço exposto por view/função somente para autenticados.
+- Bucket privado "order-files" com pastas por usuário; validação de tipo e tamanho no cliente e via políticas.
+- Criação do pedido via função de banco segura que recalcula preços e gera número.
+- Cálculo de dias úteis e disponibilidade em utilitário compartilhado + verificação no banco.
+- Tabelas shop_* antigas mantidas (não apagadas), apenas deixam de ser usadas.
