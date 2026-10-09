@@ -211,6 +211,238 @@ export type Database = {
         }
         Relationships: []
       }
+      appointments: {
+        Row: {
+          created_at: string
+          customer_name: string | null
+          customer_whatsapp: string | null
+          id: string
+          item_id: string | null
+          notes: string | null
+          order_id: string | null
+          service_name: string
+          slot_date: string
+          slot_time: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name?: string | null
+          customer_whatsapp?: string | null
+          id?: string
+          item_id?: string | null
+          notes?: string | null
+          order_id?: string | null
+          service_name: string
+          slot_date: string
+          slot_time: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string | null
+          customer_whatsapp?: string | null
+          id?: string
+          item_id?: string | null
+          notes?: string | null
+          order_id?: string | null
+          service_name?: string
+          slot_date?: string
+          slot_time?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blocked_slots: {
+        Row: {
+          id: string
+          reason: string | null
+          slot_date: string
+          slot_time: string | null
+        }
+        Insert: {
+          id?: string
+          reason?: string | null
+          slot_date: string
+          slot_time?: string | null
+        }
+        Update: {
+          id?: string
+          reason?: string | null
+          slot_date?: string
+          slot_time?: string | null
+        }
+        Relationships: []
+      }
+      business_hours: {
+        Row: {
+          slots: string[]
+          weekday: number
+        }
+        Insert: {
+          slots?: string[]
+          weekday: number
+        }
+        Update: {
+          slots?: string[]
+          weekday?: number
+        }
+        Relationships: []
+      }
+      catalog_items: {
+        Row: {
+          accepts_files: boolean
+          active: boolean
+          category_id: string | null
+          created_at: string
+          custom_fields: string[]
+          deadline_days: number | null
+          deadline_type: string
+          description: string | null
+          duration_minutes: number | null
+          id: string
+          image_url: string | null
+          kind: string
+          name: string
+          product_type: string
+          schedulable: boolean
+          sort_order: number
+          stock: number | null
+          updated_at: string
+        }
+        Insert: {
+          accepts_files?: boolean
+          active?: boolean
+          category_id?: string | null
+          created_at?: string
+          custom_fields?: string[]
+          deadline_days?: number | null
+          deadline_type?: string
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          image_url?: string | null
+          kind?: string
+          name: string
+          product_type?: string
+          schedulable?: boolean
+          sort_order?: number
+          stock?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accepts_files?: boolean
+          active?: boolean
+          category_id?: string | null
+          created_at?: string
+          custom_fields?: string[]
+          deadline_days?: number | null
+          deadline_type?: string
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          image_url?: string | null
+          kind?: string
+          name?: string
+          product_type?: string
+          schedulable?: boolean
+          sort_order?: number
+          stock?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_prices: {
+        Row: {
+          item_id: string
+          price_cents: number
+        }
+        Insert: {
+          item_id: string
+          price_cents?: number
+        }
+        Update: {
+          item_id?: string
+          price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_prices_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: true
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      holidays: {
+        Row: {
+          holiday_date: string
+          id: string
+          name: string
+        }
+        Insert: {
+          holiday_date: string
+          id?: string
+          name: string
+        }
+        Update: {
+          holiday_date?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       loyalty_services: {
         Row: {
           client_user_id: string
@@ -241,6 +473,152 @@ export type Database = {
           service_type?: string
           service_value?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      order_files: {
+        Row: {
+          created_at: string
+          file_name: string
+          id: string
+          item_name: string | null
+          order_id: string
+          path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          id?: string
+          item_name?: string | null
+          order_id: string
+          path: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          id?: string
+          item_name?: string | null
+          order_id?: string
+          path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_files_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          custom_data: Json
+          deadline_text: string | null
+          id: string
+          item_id: string | null
+          kind: string
+          name: string
+          order_id: string
+          quantity: number
+          unit_price_cents: number
+        }
+        Insert: {
+          custom_data?: Json
+          deadline_text?: string | null
+          id?: string
+          item_id?: string | null
+          kind: string
+          name: string
+          order_id: string
+          quantity: number
+          unit_price_cents: number
+        }
+        Update: {
+          custom_data?: Json
+          deadline_text?: string | null
+          id?: string
+          item_id?: string | null
+          kind?: string
+          name?: string
+          order_id?: string
+          quantity?: number
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          city: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_whatsapp: string
+          delivery: string
+          has_files: boolean
+          id: string
+          notes: string | null
+          number: number
+          payment_method: string
+          state: string | null
+          status: string
+          subtotal_cents: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_whatsapp: string
+          delivery?: string
+          has_files?: boolean
+          id?: string
+          notes?: string | null
+          number?: number
+          payment_method: string
+          state?: string | null
+          status?: string
+          subtotal_cents?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_whatsapp?: string
+          delivery?: string
+          has_files?: boolean
+          id?: string
+          notes?: string | null
+          number?: number
+          payment_method?: string
+          state?: string | null
+          status?: string
+          subtotal_cents?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -544,6 +922,36 @@ export type Database = {
         }
         Relationships: []
       }
+      store_settings: {
+        Row: {
+          city: string
+          company: string
+          freight_text: string
+          hours_text: string
+          id: number
+          pickup: string
+          whatsapp: string
+        }
+        Insert: {
+          city?: string
+          company?: string
+          freight_text?: string
+          hours_text?: string
+          id?: number
+          pickup?: string
+          whatsapp?: string
+        }
+        Update: {
+          city?: string
+          company?: string
+          freight_text?: string
+          hours_text?: string
+          id?: number
+          pickup?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       supporters: {
         Row: {
           active: boolean
@@ -600,6 +1008,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_order: { Args: { payload: Json }; Returns: Json }
       get_referrer_name: { Args: { _code: string }; Returns: string }
       has_role: {
         Args: {
@@ -609,6 +1018,17 @@ export type Database = {
         Returns: boolean
       }
       increment_affiliate_click: { Args: { _code: string }; Returns: undefined }
+      slot_available: {
+        Args: { _date: string; _time: string }
+        Returns: boolean
+      }
+      taken_slots: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          slot_date: string
+          slot_time: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "user"
