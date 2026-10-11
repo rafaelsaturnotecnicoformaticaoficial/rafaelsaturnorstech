@@ -1,4 +1,4 @@
-import { MessageCircle, Menu, X, ChevronDown } from "lucide-react";
+import { MessageCircle, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import logo from "@/assets/logo.png";
 
@@ -34,83 +34,9 @@ const Header = () => {
         </a>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-black">
-          <a href="#servicos" className="hover:text-primary transition-colors">Serviços</a>
-          <a href="#suporte-remoto" className="hover:text-primary transition-colors">Suporte Remoto</a>
-          <a href="#vantagens" className="hover:text-primary transition-colors">Vantagens</a>
-          <a href="/blog" className="hover:text-primary transition-colors">Blog</a>
-          {/* Contato com dropdown */}
-          <div className="relative" ref={contatoRef}>
-            <button
-              onClick={() => setContatoOpen(!contatoOpen)}
-              className="flex items-center gap-1 hover:text-primary transition-colors"
-            >
-              Contato <ChevronDown size={14} className={`transition-transform ${contatoOpen ? "rotate-180" : ""}`} />
-            </button>
-            {contatoOpen && (
-              <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-primary/20 rounded-lg shadow-lg py-2 z-50">
-                <a
-                  href="#contato"
-                  className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors"
-                  onClick={() => setContatoOpen(false)}
-                >
-                  Fale Conosco
-                </a>
-                <a
-                  href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors"
-                  onClick={() => setContatoOpen(false)}
-                >
-                  Canal RS Tech
-                </a>
-              </div>
-            )}
-          </div>
-
-          {/* Loja com dropdown */}
-          <div className="relative" ref={lojaRef}>
-            <button
-              onClick={() => setLojaOpen(!lojaOpen)}
-              className="flex items-center gap-1 hover:text-primary transition-colors"
-            >
-              Loja <ChevronDown size={14} className={`transition-transform ${lojaOpen ? "rotate-180" : ""}`} />
-            </button>
-            {lojaOpen && (
-              <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-primary/20 rounded-lg shadow-lg py-2 z-50">
-                <a
-                  href="/pedidos"
-                  className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors font-semibold"
-                  onClick={() => setLojaOpen(false)}
-                >
-                  Loja RS Tech (fazer pedido)
-                </a>
-                <a
-                  href="/loja"
-                  className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors"
-                  onClick={() => setLojaOpen(false)}
-                >
-                  Magazine Rafael Saturno
-                </a>
-                <a
-                  href="/shopee"
-                  className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors"
-                  onClick={() => setLojaOpen(false)}
-                >
-                  Shopee Rafael Saturno
-                </a>
-                <a
-                  href="https://abre.bio/whatsappmagazinerafaelsaturno"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-4 py-2 text-black/80 hover:text-primary hover:bg-primary/10 transition-colors"
-                  onClick={() => setLojaOpen(false)}
-                >
-                  Canal Magazine Rafael Saturno
-                </a>
-              </div>
-            )}
-          </div>
+          <a href="/produtos" className="hover:text-primary transition-colors">Produtos e Serviços</a>
+          <a href="/carrinho" className="hover:text-primary transition-colors">Carrinho</a>
+          <a href="/entrar" className="hover:text-primary transition-colors">Minha Conta</a>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -134,18 +60,9 @@ const Header = () => {
 
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-primary/20 px-4 py-4 space-y-3">
-          <a href="#servicos" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Serviços</a>
-          <a href="#suporte-remoto" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Suporte Remoto</a>
-          <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Vantagens</a>
-          <a href="/blog" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Blog</a>
-          <p className="text-primary font-semibold text-sm pt-2">Contato</p>
-          <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Fale Conosco</a>
-          <a href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Canal RS Tech</a>
-          <p className="text-primary font-semibold text-sm pt-2">Loja</p>
-          <a href="/pedidos" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary font-semibold">Loja RS Tech (fazer pedido)</a>
-          <a href="/loja" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Magazine Rafael Saturno</a>
-          <a href="/shopee" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Shopee Rafael Saturno</a>
-          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Canal Magazine Rafael Saturno</a>
+          <a href="/produtos" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Produtos e Serviços</a>
+          <a href="/carrinho" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Carrinho</a>
+          <a href="/entrar" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Minha Conta</a>
         </div>
       )}
     </header>

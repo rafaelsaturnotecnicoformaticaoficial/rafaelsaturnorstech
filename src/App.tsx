@@ -6,6 +6,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import Loja from "./pages/Loja.tsx";
 import Pedidos from "./pages/Pedidos.tsx";
+import Produtos from "./pages/Produtos.tsx";
+import Entrar from "./pages/Entrar.tsx";
+import RedefinirSenha from "./pages/RedefinirSenha.tsx";
 import Shopee from "./pages/Shopee.tsx";
 import Blog from "./pages/Blog.tsx";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade.tsx";
@@ -27,6 +30,9 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/loja" element={<Loja />} />
           <Route path="/pedidos" element={<Pedidos />} />
+          <Route path="/produtos" element={<Produtos />} />
+          <Route path="/entrar" element={<Entrar />} />
+          <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/shopee" element={<Shopee />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
