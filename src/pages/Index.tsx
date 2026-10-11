@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import PartnersCarousel from "@/components/PartnersCarousel";
-import Services from "@/components/Services";
 import Advantages from "@/components/Advantages";
 import Payment from "@/components/Payment";
 
