@@ -46,9 +46,6 @@ const Produtos = () => {
     <div className="min-h-screen flex flex-col">
       <Header /><StoreNav />
       <main className="flex-1 container mx-auto px-4 py-8">
-        <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">Produtos e <span className="text-primary">Serviços</span></h1>
-        <p className="text-muted-foreground mb-6">Retirada disponível somente em São Pedro da União - MG. Atendemos outras regiões: consulte o frete pelo WhatsApp.</p>
-        <AiAssistant names={new Map((items ?? []).map((i) => [i.id, i.name]))} onOpen={(id) => { const it = items?.find((x) => x.id === id); if (it) setOpen(it); }} />
         {!user && (
           <div className="mb-6 p-4 rounded-lg border border-secondary/40 bg-secondary/10 flex flex-wrap items-center justify-between gap-3">
             <p className="font-semibold flex items-center gap-2"><Lock size={16} /> Faça login ou crie sua conta para visualizar o preço.</p>
