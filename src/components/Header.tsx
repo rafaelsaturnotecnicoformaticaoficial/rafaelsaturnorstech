@@ -1,4 +1,4 @@
-import { MessageCircle, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import logo from "@/assets/logo.png";
 
@@ -40,15 +40,6 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center gap-3">
-          <a
-            href="https://wa.me/5535998793630"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-          >
-            <MessageCircle size={18} />
-            <span className="hidden sm:inline">Chamar no WhatsApp</span>
-          </a>
           <button
             className="md:hidden text-black"
             onClick={() => setMenuOpen(!menuOpen)}
