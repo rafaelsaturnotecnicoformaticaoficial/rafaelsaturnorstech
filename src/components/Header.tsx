@@ -1,4 +1,4 @@
-import { MessageCircle, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import logo from "@/assets/logo.png";
 
