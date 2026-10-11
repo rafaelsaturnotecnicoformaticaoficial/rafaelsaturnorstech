@@ -6,7 +6,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreNav from "@/components/store/StoreNav";
 import SchedulePicker, { useScheduleData } from "@/components/store/SchedulePicker";
-import AiAssistant from "@/components/store/AiAssistant";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
