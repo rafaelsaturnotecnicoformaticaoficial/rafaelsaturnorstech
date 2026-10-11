@@ -1,4 +1,4 @@
-import { MessageCircle, Menu, X, ChevronDown } from "lucide-react";
+import { MessageCircle, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import logo from "@/assets/logo.png";
 
@@ -60,18 +60,9 @@ const Header = () => {
 
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-primary/20 px-4 py-4 space-y-3">
-          <a href="#servicos" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Serviços</a>
-          <a href="#suporte-remoto" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Suporte Remoto</a>
-          <a href="#vantagens" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Vantagens</a>
-          <a href="/blog" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Blog</a>
-          <p className="text-primary font-semibold text-sm pt-2">Contato</p>
-          <a href="#contato" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Fale Conosco</a>
-          <a href="https://www.whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Canal RS Tech</a>
-          <p className="text-primary font-semibold text-sm pt-2">Loja</p>
-          <a href="/pedidos" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary font-semibold">Loja RS Tech (fazer pedido)</a>
-          <a href="/loja" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Magazine Rafael Saturno</a>
-          <a href="/shopee" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Shopee Rafael Saturno</a>
-          <a href="https://abre.bio/whatsappmagazinerafaelsaturno" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="block pl-4 text-black/80 hover:text-primary">Canal Magazine Rafael Saturno</a>
+          <a href="/produtos" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Produtos e Serviços</a>
+          <a href="/carrinho" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Carrinho</a>
+          <a href="/entrar" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Minha Conta</a>
         </div>
       )}
     </header>
