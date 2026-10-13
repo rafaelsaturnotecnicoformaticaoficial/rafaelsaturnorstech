@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,12 +7,36 @@ import { Label } from "@/components/ui/label";
 import { Lock } from "lucide-react";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
+import { checkAdminAccess } from "@/lib/admin";
+import { lovable } from "@/integrations/lovable";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const verify = async () => {
+      try { if (await checkAdminAccess()) navigate("/admin", { replace: true }); }
+      catch { toast.error("Não foi possível verificar o acesso. Tente novamente."); }
+    };
+    void verify();
+    const { data } = supabase.auth.onAuthStateChange(() => { setTimeout(() => void verify(), 0); });
+    return () => data.subscription.unsubscribe();
+  }, [navigate]);
+
+  const googleLogin = async () => {
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/admin/login`, extraParams: { prompt: "select_account" } });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      if (await checkAdminAccess()) navigate("/admin");
+      else toast.error("Esta conta não tem acesso ao painel administrativo.");
+    } catch { toast.error("Não foi possível entrar com Google."); }
+    finally { setLoading(false); }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,13 +49,7 @@ const AdminLogin = () => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
-      // Check if user is admin
-      const { data: roles, error: roleError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .single();
-
-      if (roleError || !roles || roles.role !== "admin") {
+      if (!(await checkAdminAccess())) {
         await supabase.auth.signOut();
         toast.error("Acesso negado. Você não é administrador.");
         return;
@@ -83,6 +101,12 @@ const AdminLogin = () => {
             {loading ? "Entrando..." : "Entrar"}
           </Button>
         </form>
+        <Button variant="outline" className="w-full mt-3" disabled={loading} onClick={googleLogin}>Entrar com Google</Button>
+        <Button variant="link" className="w-full mt-2" disabled={loading} onClick={async () => {
+          if (!email.trim()) return toast.error("Informe seu e-mail para recuperar a senha.");
+          const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/redefinir-senha` });
+          if (error) toast.error("Não foi possível enviar o link."); else toast.success("Verifique seu e-mail para redefinir a senha.");
+        }}>Esqueci minha senha</Button>
       </div>
     </div>
   );
