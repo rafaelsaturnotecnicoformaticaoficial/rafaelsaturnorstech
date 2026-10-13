@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
+import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
 import StoreNav from "@/components/store/StoreNav";
 import SchedulePicker, { useScheduleData } from "@/components/store/SchedulePicker";
@@ -69,14 +70,17 @@ const Produtos = () => {
             const dt = deadlineText(i);
             return (
               <div key={i.id} className="bg-card border border-border rounded-xl overflow-hidden flex flex-col">
-                <div className="aspect-[4/3] bg-muted">{i.image_url && <img src={i.image_url} alt={i.name} className="w-full h-full object-cover" loading="lazy" />}</div>
+                <div className="relative aspect-[4/3] bg-muted">
+                  <img src={i.image_url || logo} alt={i.image_url ? i.name : "RS Tech"} className={`w-full h-full ${i.image_url ? "object-cover" : "object-contain p-6"}`} loading="lazy" />
+                  {i.image_url && <img src={logo} alt="RS Tech" className="absolute bottom-2 right-2 w-10 h-10 object-contain bg-background rounded border border-border p-1" />}
+                </div>
                 <div className="p-3 flex-1 flex flex-col gap-1">
                   <span className="text-xs text-muted-foreground">{i.kind === "servico" ? "Serviço" : i.product_type === "digital" ? "Produto digital" : "Produto"}</span>
                   <h3 className="font-bold leading-tight">{i.name}</h3>
                   {dt && <p className="text-xs text-muted-foreground">{dt}</p>}
                   {i.schedulable && <p className="text-xs text-primary flex items-center gap-1"><CalendarDays size={12} /> Agendável</p>}
                   <div className="mt-auto pt-2">
-                    {user ? <p className="font-bold text-primary text-lg">{prices?.has(i.id) ? brl(prices.get(i.id)!) : "—"}</p>
+                    {user ? <p className="font-bold text-primary text-lg">{prices?.has(i.id) ? brl(prices.get(i.id) ?? 0) : "—"}</p>
                       : <p className="text-xs text-muted-foreground">Preço visível após login</p>}
                     <Button size="sm" className="w-full mt-2" onClick={() => setOpen(i)}>
                       {i.schedulable ? "Agendar serviço" : "Adicionar ao carrinho"}
@@ -126,7 +130,7 @@ const AddDialog = ({ item, price, logged, holidays, onClose }: { item: Item; pri
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-lg max-h-[92vh] overflow-y-auto">
         <DialogHeader><DialogTitle>{item.name}</DialogTitle></DialogHeader>
-        {item.image_url && <img src={item.image_url} alt="" className="w-full max-h-48 object-cover rounded" />}
+        <img src={item.image_url || logo} alt={item.image_url ? item.name : "RS Tech"} className="w-full h-40 object-contain rounded" />
         {item.description && <p className="text-sm text-muted-foreground">{item.description}</p>}
         {dt && <p className="text-sm font-semibold">{dt}</p>}
         {logged ? <p className="text-xl font-bold text-primary">{brl(price)}</p> : <p className="text-sm">Faça login ou crie sua conta para visualizar o preço.</p>}

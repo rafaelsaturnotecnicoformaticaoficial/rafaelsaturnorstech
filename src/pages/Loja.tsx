@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PrintingService from "@/components/PrintingService";
-import { ShoppingBag, ExternalLink, ArrowRight } from "lucide-react";
+import { ExternalLink, ArrowRight } from "lucide-react";
 
 const categorias = [
   {
@@ -46,16 +46,6 @@ const Loja = () => {
         {/* Hero da loja */}
         <div className="bg-primary py-12 text-center">
           <div className="container mx-auto px-4">
-            <div className="inline-flex items-center gap-2 bg-primary-foreground/10 text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
-              <ShoppingBag size={16} />
-              Loja Oficial
-            </div>
-            <h1 className="font-display text-3xl md:text-5xl font-bold text-primary-foreground mb-3">
-              Magazine Rafael Saturno
-            </h1>
-            <p className="text-primary-foreground/70 max-w-lg mx-auto mb-6">
-              Confira as melhores ofertas em tecnologia, eletrônicos e muito mais com preços especiais
-            </p>
             <a
               href={LOJA_URL}
               target="_blank"

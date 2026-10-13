@@ -59,20 +59,6 @@ const Blog = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <div className="bg-primary py-12 text-center">
-          <div className="container mx-auto px-4">
-            <div className="inline-flex items-center gap-2 bg-primary-foreground/10 text-primary-foreground px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
-              <Newspaper size={16} />
-              Blog RS Tech
-            </div>
-            <h1 className="font-display text-3xl md:text-5xl font-bold text-primary-foreground mb-3">
-              Artigos de Tecnologia
-            </h1>
-            <p className="text-primary-foreground/70 max-w-xl mx-auto">
-              Dicas, ofertas e novidades do mundo da tecnologia direto do blog do Rafael Saturno.
-            </p>
-          </div>
-        </div>
 
 
         <section className="py-10 md:py-14 bg-background">
