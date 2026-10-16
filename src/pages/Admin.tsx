@@ -11,9 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { toast } from "sonner";
 import { LogOut, Plus, Trash2, Handshake, ShoppingCart, Code, ArrowLeft, Heart, Upload, Pencil, FileText, Store, Printer } from "lucide-react";
 import SupportersTab from "@/components/admin/SupportersTab";
-import BudgetsTab from "@/components/admin/BudgetsTab";
-import ShopTab from "@/components/admin/ShopTab";
-import PrintingTab from "@/components/admin/PrintingTab";
+import CatalogTab from "@/components/admin/CatalogTab";
+import StoreOrdersTab from "@/components/admin/StoreOrdersTab";
+import SchedulingTab from "@/components/admin/SchedulingTab";
+import StoreSettingsTab, { StoreClientsTab } from "@/components/admin/StoreSettingsTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import logo from "@/assets/logo.png";
@@ -71,24 +72,23 @@ const Admin = () => {
       </header>
 
       <div className="container mx-auto px-4 py-6">
-        <Tabs defaultValue="partners">
+        <Tabs defaultValue="catalog">
           <TabsList className="mb-6 flex-wrap h-auto">
-            <TabsTrigger value="partners" className="gap-1"><Handshake size={14} /> Parceiros</TabsTrigger>
-            <TabsTrigger value="supporters" className="gap-1"><Heart size={14} /> Apoio e Social</TabsTrigger>
-            <TabsTrigger value="shop" className="gap-1"><Store size={14} /> Loja</TabsTrigger>
-            <TabsTrigger value="printing" className="gap-1"><Printer size={14} /> Impressão</TabsTrigger>
-            <TabsTrigger value="products" className="gap-1"><ShoppingCart size={14} /> Recomendados</TabsTrigger>
-            <TabsTrigger value="adsense" className="gap-1"><Code size={14} /> Anúncios</TabsTrigger>
-            <TabsTrigger value="budgets" className="gap-1"><FileText size={14} /> Orçamentos</TabsTrigger>
+            <TabsTrigger value="catalog">Produtos e Serviços</TabsTrigger>
+            <TabsTrigger value="orders">Pedidos</TabsTrigger>
+            <TabsTrigger value="schedule">Agendamentos</TabsTrigger>
+            <TabsTrigger value="clients">Clientes</TabsTrigger>
+            <TabsTrigger value="settings">Configurações</TabsTrigger>
+            <TabsTrigger value="partners">Parceiros</TabsTrigger>
+            <TabsTrigger value="supporters">Apoio e Social</TabsTrigger>
           </TabsList>
-
+          <TabsContent value="catalog"><CatalogTab /></TabsContent>
+          <TabsContent value="orders"><StoreOrdersTab /></TabsContent>
+          <TabsContent value="schedule"><SchedulingTab /></TabsContent>
+          <TabsContent value="clients"><StoreClientsTab /></TabsContent>
+          <TabsContent value="settings"><StoreSettingsTab /></TabsContent>
           <TabsContent value="partners"><PartnersTab /></TabsContent>
           <TabsContent value="supporters"><SupportersTab /></TabsContent>
-          <TabsContent value="shop"><ShopTab /></TabsContent>
-          <TabsContent value="printing"><PrintingTab /></TabsContent>
-          <TabsContent value="products"><ProductsTab /></TabsContent>
-          <TabsContent value="adsense"><AdsenseTab /></TabsContent>
-          <TabsContent value="budgets"><BudgetsTab /></TabsContent>
         </Tabs>
       </div>
     </div>
