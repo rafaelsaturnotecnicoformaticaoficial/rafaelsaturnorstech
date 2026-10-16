@@ -15,6 +15,13 @@
       "when": 1791566080821,
       "tag": "0001_profile_city_state_signup",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792119532642,
+      "tag": "0002_page_views",
+      "breakpoints": true
     }
   ]
 }
