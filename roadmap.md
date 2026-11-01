@@ -1,5 +1,5 @@
 # Current request
-- [ ] Repair admin access and add administration for the current catalog, orders, scheduling, customers and store settings.
-- [ ] Display the RS Tech logo on catalog products.
-- [ ] Remove the requested Shopee, Blog and Magazine page headings.
-- [ ] Verify authorized admin edits and public pages.
+- [ ] Place partners and supporters below Products and Services.
+- [ ] Add customer editing and deletion with confirmation and protected admin access.
+- [ ] Add management reporting and live site visits.
+- [ ] Verify public display and authenticated administration.
