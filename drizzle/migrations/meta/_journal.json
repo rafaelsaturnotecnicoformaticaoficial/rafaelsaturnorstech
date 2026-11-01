@@ -22,6 +22,13 @@
       "when": 1792119532642,
       "tag": "0002_page_views",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793497032958,
+      "tag": "0003_management_visits_customer_controls",
+      "breakpoints": true
     }
   ]
 }
