@@ -17,7 +17,7 @@ export default function SiteVisitTracker() {
       const id = session;
       const record = (view: boolean) => {
         if (document.visibilityState !== 'visible') return;
-        void supabase.rpc('record_site_visit', { _session: id, _path: pathname, _view: view });
+        void supabase.rpc('record_site_visit', { _session: id, _path: pathname, _view: view }).then(() => undefined);
       };
       record(true);
       timer = setInterval(() => record(false), 30000);
