@@ -17,6 +17,7 @@ import AdminLogin from "./pages/AdminLogin.tsx";
 import Admin from "./pages/Admin.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import CookieConsent from "./components/CookieConsent.tsx";
+import SiteVisitTracker from "./components/SiteVisitTracker";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <SiteVisitTracker />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/loja" element={<Loja />} />

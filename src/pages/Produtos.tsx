@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
+import PartnersCarousel from "@/components/PartnersCarousel";
 import StoreNav from "@/components/store/StoreNav";
 import SchedulePicker, { useScheduleData } from "@/components/store/SchedulePicker";
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,7 @@ const Produtos = ({ embedded = false }: { embedded?: boolean }) => {
           })}
         </div>
       </main>
+      {!embedded && <PartnersCarousel />}
       {!embedded && <Footer />}
       {open && <AddDialog item={open} price={prices?.get(open.id) ?? 0} logged={!!user} holidays={sched.data?.holidays} onClose={() => setOpen(null)} />}
     </div>
