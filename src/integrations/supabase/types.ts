@@ -943,6 +943,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_sessions: {
+        Row: {
+          last_seen: string
+          path: string
+          session_id: string
+        }
+        Insert: {
+          last_seen?: string
+          path: string
+          session_id: string
+        }
+        Update: {
+          last_seen?: string
+          path?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
       store_settings: {
         Row: {
           city: string
@@ -1030,6 +1048,10 @@ export type Database = {
     }
     Functions: {
       create_order: { Args: { payload: Json }; Returns: Json }
+      delete_customer_profile: {
+        Args: { _profile_id: string }
+        Returns: undefined
+      }
       get_referrer_name: { Args: { _code: string }; Returns: string }
       has_role: {
         Args: {
@@ -1039,6 +1061,11 @@ export type Database = {
         Returns: boolean
       }
       increment_affiliate_click: { Args: { _code: string }; Returns: undefined }
+      management_report: { Args: { _from: string; _to: string }; Returns: Json }
+      record_site_visit: {
+        Args: { _path: string; _session: string; _view?: boolean }
+        Returns: undefined
+      }
       slot_available: {
         Args: { _date: string; _time: string }
         Returns: boolean

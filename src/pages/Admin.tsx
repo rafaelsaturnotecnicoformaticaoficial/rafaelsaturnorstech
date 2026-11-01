@@ -14,7 +14,10 @@ import SupportersTab from "@/components/admin/SupportersTab";
 import CatalogTab from "@/components/admin/CatalogTab";
 import StoreOrdersTab from "@/components/admin/StoreOrdersTab";
 import SchedulingTab from "@/components/admin/SchedulingTab";
-import StoreSettingsTab, { StoreClientsTab } from "@/components/admin/StoreSettingsTab";
+import StoreSettingsTab from "@/components/admin/StoreSettingsTab";
+import StoreClientsTab from "@/components/admin/StoreClientsTab";
+import ManagementTab from "@/components/admin/ManagementTab";
+import { checkAdminAccess } from "@/lib/admin";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import logo from "@/assets/logo.png";
@@ -31,16 +34,14 @@ const Admin = () => {
 
   useEffect(() => {
     const checkAdmin = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/admin/login"); return; }
-      const { data: roles } = await supabase.from("user_roles").select("role").single();
-      if (!roles || roles.role !== "admin") {
-        await supabase.auth.signOut();
+      try {
+        if (!await checkAdminAccess()) { navigate("/admin/login"); return; }
+        setIsAdmin(true);
+        setLoading(false);
+      } catch {
+        toast.error("Não foi possível verificar o acesso ao painel.");
         navigate("/admin/login");
-        return;
       }
-      setIsAdmin(true);
-      setLoading(false);
     };
     checkAdmin();
   }, [navigate]);
@@ -78,6 +79,7 @@ const Admin = () => {
             <TabsTrigger value="orders">Pedidos</TabsTrigger>
             <TabsTrigger value="schedule">Agendamentos</TabsTrigger>
             <TabsTrigger value="clients">Clientes</TabsTrigger>
+            <TabsTrigger value="management">Relatório gerencial</TabsTrigger>
             <TabsTrigger value="settings">Configurações</TabsTrigger>
             <TabsTrigger value="partners">Parceiros</TabsTrigger>
             <TabsTrigger value="supporters">Apoio e Social</TabsTrigger>
@@ -86,6 +88,7 @@ const Admin = () => {
           <TabsContent value="orders"><StoreOrdersTab /></TabsContent>
           <TabsContent value="schedule"><SchedulingTab /></TabsContent>
           <TabsContent value="clients"><StoreClientsTab /></TabsContent>
+          <TabsContent value="management"><ManagementTab /></TabsContent>
           <TabsContent value="settings"><StoreSettingsTab /></TabsContent>
           <TabsContent value="partners"><PartnersTab /></TabsContent>
           <TabsContent value="supporters"><SupportersTab /></TabsContent>
