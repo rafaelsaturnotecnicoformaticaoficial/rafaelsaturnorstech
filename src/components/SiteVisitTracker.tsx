@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { trackedPath } from '@/lib/visitTracking';
 
 export default function SiteVisitTracker() {
   const { pathname } = useLocation();
@@ -9,7 +10,7 @@ export default function SiteVisitTracker() {
     let timer: ReturnType<typeof setInterval> | undefined;
     let started = false;
     const start = () => {
-      if (started || localStorage.getItem('cookie-consent') !== 'true') return;
+      if (started || !trackedPath(pathname, localStorage.getItem('cookie-consent'))) return;
       started = true;
       let session = sessionStorage.getItem('site-visit-session');
       if (!session) { session = crypto.randomUUID(); sessionStorage.setItem('site-visit-session', session); }
