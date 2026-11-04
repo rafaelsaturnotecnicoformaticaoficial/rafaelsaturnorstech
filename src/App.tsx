@@ -1,3 +1,4 @@
+import MinhaConta from "@/pages/MinhaConta";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/produtos" element={<Produtos />} />
           <Route path="/carrinho" element={<Carrinho />} />
+          <Route path="/minha-conta" element={<MinhaConta />} />
           <Route path="/entrar" element={<Entrar />} />
           <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/shopee" element={<Shopee />} />
