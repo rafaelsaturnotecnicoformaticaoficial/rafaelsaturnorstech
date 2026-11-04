@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import Loja from "./pages/Loja.tsx";
 import Pedidos from "./pages/Pedidos.tsx";
 import Produtos from "./pages/Produtos.tsx";
+import Carrinho from "./pages/Carrinho.tsx";
 import Entrar from "./pages/Entrar.tsx";
 import RedefinirSenha from "./pages/RedefinirSenha.tsx";
 import Shopee from "./pages/Shopee.tsx";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/loja" element={<Loja />} />
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/produtos" element={<Produtos />} />
+          <Route path="/carrinho" element={<Carrinho />} />
           <Route path="/entrar" element={<Entrar />} />
           <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/shopee" element={<Shopee />} />
