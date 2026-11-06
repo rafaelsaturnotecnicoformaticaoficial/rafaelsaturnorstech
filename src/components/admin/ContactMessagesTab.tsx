@@ -9,7 +9,7 @@ export type ContactMessage = { id: string; name: string; email: string; whatsapp
 export const useContactMessages = () => {
   const qc = useQueryClient();
   useEffect(() => {
-    const ch = supabase.channel("contact-messages-admin")
+    const ch = supabase.channel(`contact-messages-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "contact_messages" }, (p) => {
         if (p.eventType === "INSERT") toast.info(`Nova mensagem de contato: ${(p.new as ContactMessage).name}`);
         qc.invalidateQueries({ queryKey: ["contact-messages"] });
