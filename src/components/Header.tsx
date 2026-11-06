@@ -37,6 +37,7 @@ const Header = () => {
           <a href="/produtos" className="hover:text-primary transition-colors">Produtos e Serviços</a>
           <a href="/carrinho" className="hover:text-primary transition-colors">Carrinho</a>
           <a href="/entrar" className="hover:text-primary transition-colors">Minha Conta</a>
+          <a href="/contato" className="hover:text-primary transition-colors">Contato</a>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -54,6 +55,7 @@ const Header = () => {
           <a href="/produtos" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Produtos e Serviços</a>
           <a href="/carrinho" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Carrinho</a>
           <a href="/entrar" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Minha Conta</a>
+          <a href="/contato" onClick={() => setMenuOpen(false)} className="block text-black font-bold hover:text-primary">Contato</a>
         </div>
       )}
     </header>

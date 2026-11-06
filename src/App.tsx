@@ -18,6 +18,7 @@ import TermosDeUso from "./pages/TermosDeUso.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import Admin from "./pages/Admin.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Contato from "./pages/Contato.tsx";
 import CookieConsent from "./components/CookieConsent.tsx";
 import SiteVisitTracker from "./components/SiteVisitTracker";
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/shopee" element={<Shopee />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/contato" element={<Contato />} />
           <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
           <Route path="/termos-de-uso" element={<TermosDeUso />} />
           <Route path="/admin/login" element={<AdminLogin />} />
