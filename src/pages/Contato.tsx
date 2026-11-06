@@ -1,6 +1,7 @@
 import { Instagram, Facebook, Youtube } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ContactForm from "@/components/ContactForm";
 
 const socialLinks = [
   { icon: Instagram, href: "https://www.instagram.com/rstecnicoinformaticaoficial/", label: "Instagram" },
@@ -47,6 +48,7 @@ const Contato = () => {
                 <TikTokIcon />
               </a>
             </div>
+            <div className="mt-12"><ContactForm /></div>
           </div>
         </section>
       </main>

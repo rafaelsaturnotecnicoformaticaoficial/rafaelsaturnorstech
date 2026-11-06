@@ -16,6 +16,7 @@ import StoreOrdersTab from "@/components/admin/StoreOrdersTab";
 import SchedulingTab from "@/components/admin/SchedulingTab";
 import StoreSettingsTab from "@/components/admin/StoreSettingsTab";
 import StoreClientsTab from "@/components/admin/StoreClientsTab";
+import ContactMessagesTab, { useContactMessages } from "@/components/admin/ContactMessagesTab";
 import ManagementTab from "@/components/admin/ManagementTab";
 import { checkAdminAccess } from "@/lib/admin";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -79,6 +80,7 @@ const Admin = () => {
             <TabsTrigger value="orders">Pedidos</TabsTrigger>
             <TabsTrigger value="schedule">Agendamentos</TabsTrigger>
             <TabsTrigger value="clients">Clientes</TabsTrigger>
+            <MessagesTrigger />
             <TabsTrigger value="management">Relatório gerencial</TabsTrigger>
             <TabsTrigger value="settings">Configurações</TabsTrigger>
             <TabsTrigger value="partners">Parceiros</TabsTrigger>
@@ -87,6 +89,7 @@ const Admin = () => {
           <TabsContent value="catalog"><CatalogTab /></TabsContent>
           <TabsContent value="orders"><StoreOrdersTab /></TabsContent>
           <TabsContent value="schedule"><SchedulingTab /></TabsContent>
+          <TabsContent value="messages"><ContactMessagesTab /></TabsContent>
           <TabsContent value="clients"><StoreClientsTab /></TabsContent>
           <TabsContent value="management"><ManagementTab /></TabsContent>
           <TabsContent value="settings"><StoreSettingsTab /></TabsContent>
@@ -529,3 +532,9 @@ const AdsenseTab = () => {
 };
 
 export default Admin;
+
+function MessagesTrigger() {
+  const { data = [] } = useContactMessages();
+  const unread = data.filter((m) => !m.read).length;
+  return <TabsTrigger value="messages">Mensagens{unread > 0 ? ` (${unread})` : ""}</TabsTrigger>;
+}
