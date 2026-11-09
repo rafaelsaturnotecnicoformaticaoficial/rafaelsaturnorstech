@@ -7,6 +7,7 @@ import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
 import PartnersCarousel from "@/components/PartnersCarousel";
 import { OpenStatusBadge } from "@/components/OpenStatus";
+import ProductsSeo from "@/components/ProductsSeo";
 import StoreNav from "@/components/store/StoreNav";
 import SchedulePicker, { useScheduleData } from "@/components/store/SchedulePicker";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ const Produtos = ({ embedded = false }: { embedded?: boolean }) => {
   const list = (items ?? []).filter((i) => (cat === "todas" || i.category_id === cat) && (kind === "todos" || (kind === "digital" ? i.kind === "produto" && i.product_type === "digital" : i.kind === kind)));
 
   return (
+      {!embedded && <ProductsSeo items={items ?? []} />}
     <div className="min-h-screen flex flex-col">
       {!embedded && <><Header /><StoreNav /></>}
       <main className="flex-1 container mx-auto px-4 py-8">
