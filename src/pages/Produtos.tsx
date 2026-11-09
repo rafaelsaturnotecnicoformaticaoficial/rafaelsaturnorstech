@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import logo from "@/assets/logo.png";
 import Footer from "@/components/Footer";
 import PartnersCarousel from "@/components/PartnersCarousel";
+import { OpenStatusBadge } from "@/components/OpenStatus";
 import StoreNav from "@/components/store/StoreNav";
 import SchedulePicker, { useScheduleData } from "@/components/store/SchedulePicker";
 import { Button } from "@/components/ui/button";
