@@ -46,8 +46,8 @@ const Produtos = ({ embedded = false }: { embedded?: boolean }) => {
   const list = (items ?? []).filter((i) => (cat === "todas" || i.category_id === cat) && (kind === "todos" || (kind === "digital" ? i.kind === "produto" && i.product_type === "digital" : i.kind === kind)));
 
   return (
-      {!embedded && <ProductsSeo items={items ?? []} />}
     <div className="min-h-screen flex flex-col">
+      {!embedded && <ProductsSeo items={items ?? []} />}
       {!embedded && <><Header /><StoreNav /></>}
       <main className="flex-1 container mx-auto px-4 py-8">
         {embedded && <h2 className="text-3xl font-bold text-center mb-6">Produtos e Serviços</h2>}
