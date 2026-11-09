@@ -26,7 +26,9 @@ const ContactForm = () => {
     const parsed = schema.safeParse(form);
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     setSending(true);
-    const { error } = await supabase.from("contact_messages").insert(parsed.data as any);
+    const id = crypto.randomUUID();
+    const { error } = await supabase.from("contact_messages").insert({ id, ...parsed.data } as any);
+    if (!error) supabase.functions.invoke("notify-contact", { body: { id } }).catch(() => undefined);
     setSending(false);
     if (error) return toast.error("Não foi possível enviar. Tente novamente.");
     setSent(true);
