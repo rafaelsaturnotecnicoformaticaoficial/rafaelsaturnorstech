@@ -12,3 +12,11 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+User-agent: *
+Disallow: /admin
+Disallow: /carrinho
+Disallow: /minha-conta
+Disallow: /redefinir-senha
+
+Sitemap: https://rafaelsaturnorstech.lovable.app/sitemap.xml
