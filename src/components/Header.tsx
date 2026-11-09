@@ -1,6 +1,7 @@
 import { Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import logo from "@/assets/logo.png";
+import OpenStatus from "./OpenStatus";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,6 +25,7 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-primary/20">
+      <OpenStatus />
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <a href="/" className="flex items-center gap-3">
           <img src={logo} alt="RS Tech Logo" className="h-12 w-12 object-contain" />
