@@ -49,6 +49,9 @@ const Produtos = ({ embedded = false }: { embedded?: boolean }) => {
       {!embedded && <><Header /><StoreNav /></>}
       <main className="flex-1 container mx-auto px-4 py-8">
         {embedded && <h2 className="text-3xl font-bold text-center mb-6">Produtos e Serviços</h2>}
+        <div className="mb-4 flex justify-center sm:justify-start">
+          <OpenStatusBadge />
+        </div>
         {!user && (
           <div className="mb-6 p-4 rounded-lg border border-secondary/40 bg-secondary/10 flex flex-wrap items-center justify-between gap-3">
             <p className="font-semibold flex items-center gap-2"><Lock size={16} /> Faça login ou crie sua conta para visualizar o preço.</p>
