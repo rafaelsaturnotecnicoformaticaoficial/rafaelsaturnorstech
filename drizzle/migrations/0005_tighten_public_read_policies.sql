@@ -1,0 +1,18 @@
+DROP POLICY IF EXISTS "bs read" ON public.blocked_slots;
+CREATE POLICY "bs read" ON public.blocked_slots FOR SELECT TO anon, authenticated USING (slot_date >= CURRENT_DATE);
+DROP POLICY IF EXISTS "cat read" ON public.categories;
+CREATE POLICY "cat read" ON public.categories FOR SELECT TO anon, authenticated USING (length(name) > 0);
+DROP POLICY IF EXISTS "ss read" ON public.store_settings;
+CREATE POLICY "ss read" ON public.store_settings FOR SELECT TO anon, authenticated USING (id = 1);
+DROP POLICY IF EXISTS "prices logged read" ON public.catalog_prices;
+CREATE POLICY "prices logged read" ON public.catalog_prices FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.catalog_items ci WHERE ci.id = item_id AND (ci.active OR public.has_role(auth.uid(),'admin'))));
+DROP POLICY IF EXISTS "Anyone can read printing settings" ON public.printing_settings;
+CREATE POLICY "Anyone can read printing settings" ON public.printing_settings FOR SELECT TO anon, authenticated USING (id = 1);
+DROP POLICY IF EXISTS "Anyone can submit affiliate signup" ON public.affiliate_signups;
+CREATE POLICY "Anyone can submit affiliate signup" ON public.affiliate_signups FOR INSERT TO anon, authenticated WITH CHECK (status = 'pendente' AND length(name) BETWEEN 2 AND 120 AND length(email) BETWEEN 5 AND 200 AND length(whatsapp) BETWEEN 8 AND 30 AND length(coalesce(notes,'')) <= 5000);
+DROP POLICY IF EXISTS "hol read" ON public.holidays;
+CREATE POLICY "hol read" ON public.holidays FOR SELECT TO anon, authenticated USING (holiday_date >= CURRENT_DATE - 365);
+DROP POLICY IF EXISTS "bh read" ON public.business_hours;
+CREATE POLICY "bh read" ON public.business_hours FOR SELECT TO anon, authenticated USING (weekday BETWEEN 0 AND 6);
+DROP POLICY IF EXISTS "Public can read banner files" ON storage.objects;
+CREATE POLICY "Public can read banner files" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'banners' AND (owner_id = (select auth.uid()::text) OR public.has_role(auth.uid(),'admin')));
