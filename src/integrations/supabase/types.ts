@@ -404,6 +404,38 @@ export type Database = {
           },
         ]
       }
+      catalog_variants: {
+        Row: {
+          id: string
+          item_id: string
+          name: string
+          price_cents: number
+          sort_order: number
+        }
+        Insert: {
+          id?: string
+          item_id: string
+          name: string
+          price_cents: number
+          sort_order?: number
+        }
+        Update: {
+          id?: string
+          item_id?: string
+          name?: string
+          price_cents?: number
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_variants_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -1094,6 +1126,10 @@ export type Database = {
       management_report: { Args: { _from: string; _to: string }; Returns: Json }
       record_site_visit: {
         Args: { _path: string; _session: string; _view?: boolean }
+        Returns: undefined
+      }
+      save_catalog_variants: {
+        Args: { _item_id: string; _variants: Json }
         Returns: undefined
       }
       slot_available: {

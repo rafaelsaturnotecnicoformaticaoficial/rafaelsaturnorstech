@@ -43,6 +43,13 @@
       "when": 1794264873396,
       "tag": "0005_tighten_public_read_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794312749452,
+      "tag": "0006_catalog_item_variations",
+      "breakpoints": true
     }
   ]
 }
