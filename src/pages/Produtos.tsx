@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { selectedPrice, type PriceVariant } from "@/lib/variants";
 import { toast } from "sonner";
 import { Upload, Lock, CalendarDays } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
@@ -44,6 +46,10 @@ const Produtos = ({ embedded = false }: { embedded?: boolean }) => {
   });
 
   const list = (items ?? []).filter((i) => (cat === "todas" || i.category_id === cat) && (kind === "todos" || (kind === "digital" ? i.kind === "produto" && i.product_type === "digital" : i.kind === kind)));
+  const { data: variants } = useQuery({
+    queryKey: ["catalog_variants", user?.id], enabled: !!user,
+    queryFn: async () => { const result = await supabase.from("catalog_variants").select("*").order("sort_order"); if (result.error) throw result.error; return result.data; },
+  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -76,6 +82,8 @@ const Produtos = ({ embedded = false }: { embedded?: boolean }) => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {list.map((i) => {
             const dt = deadlineText(i);
+            const options = variants?.filter(v => v.item_id === i.id) ?? [];
+            const displayPrice = options.length ? Math.min(...options.map(v => v.price_cents)) : prices?.get(i.id);
             return (
               <div key={i.id} className="bg-card border border-border rounded-xl overflow-hidden flex flex-col">
                 <div className="relative aspect-[4/3] bg-muted">
@@ -88,7 +96,7 @@ const Produtos = ({ embedded = false }: { embedded?: boolean }) => {
                   {dt && <p className="text-xs text-muted-foreground">{dt}</p>}
                   {i.schedulable && <p className="text-xs text-primary flex items-center gap-1"><CalendarDays size={12} /> Agendável</p>}
                   <div className="mt-auto pt-2">
-                    {user ? <p className="font-bold text-primary text-lg">{prices?.has(i.id) ? brl(prices.get(i.id) ?? 0) : "—"}</p>
+                    {user ? <p className="font-bold text-primary text-lg">{displayPrice !== undefined ? `${options.length ? "A partir de " : ""}${brl(displayPrice)}` : "—"}</p>
                       : <p className="text-xs text-muted-foreground">Preço visível após login</p>}
                     <Button size="sm" className="w-full mt-2" onClick={() => setOpen(i)}>
                       {i.schedulable ? "Agendar serviço" : "Adicionar ao carrinho"}
@@ -102,12 +110,14 @@ const Produtos = ({ embedded = false }: { embedded?: boolean }) => {
       </main>
       {!embedded && <PartnersCarousel />}
       {!embedded && <Footer />}
-      {open && <AddDialog item={open} price={prices?.get(open.id) ?? 0} logged={!!user} holidays={sched.data?.holidays} onClose={() => setOpen(null)} />}
+      {open && <AddDialog item={open} price={prices?.get(open.id) ?? 0} variants={variants?.filter(v => v.item_id === open.id) ?? []} ready={!user || (!!variants && !!prices)} logged={!!user} holidays={sched.data?.holidays} onClose={() => setOpen(null)} />}
     </div>
   );
 };
 
-const AddDialog = ({ item, price, logged, holidays, onClose }: { item: Item; price: number; logged: boolean; holidays?: Set<string>; onClose: () => void }) => {
+const AddDialog = ({ item, price, variants, ready, logged, holidays, onClose }: { item: Item; price: number; variants: PriceVariant[]; ready: boolean; logged: boolean; holidays?: Set<string>; onClose: () => void }) => {
+  const [variantId, setVariantId] = useState("");
+  const actualPrice = selectedPrice(price, variants, variantId);
   const [qty, setQty] = useState(1);
   const [custom, setCustom] = useState<Record<string, string>>({});
   const [files, setFiles] = useState<File[]>([]);
@@ -126,10 +136,11 @@ const AddDialog = ({ item, price, logged, holidays, onClose }: { item: Item; pri
 
   const add = () => {
     if (!logged) { window.location.href = "/entrar?next=/produtos"; return; }
+    if (!ready || actualPrice === null) return toast.error("Escolha uma variação.");
     if (item.schedulable && (!date || !time)) return toast.error("Escolha data e horário.");
     cartStore.add({
-      key: crypto.randomUUID(), item_id: item.id, name: item.name, image_url: item.image_url, kind: item.kind,
-      price_cents: price, quantity: item.schedulable ? 1 : qty, deadline_text: dt, custom, date, time, appt_notes: notes, files,
+      key: crypto.randomUUID(), item_id: item.id, variant_id: variantId || undefined, name: variantId ? `${item.name} — ${variants.find(v => v.id === variantId)?.name}` : item.name, image_url: item.image_url, kind: item.kind,
+      price_cents: actualPrice, quantity: item.schedulable ? 1 : qty, deadline_text: dt, custom, date, time, appt_notes: notes, files,
     });
     toast.success("Adicionado ao carrinho!");
     onClose();
@@ -142,7 +153,8 @@ const AddDialog = ({ item, price, logged, holidays, onClose }: { item: Item; pri
         <img src={item.image_url || logo} alt={item.image_url ? item.name : "RS Tech"} className="w-full h-40 object-contain rounded" />
         {item.description && <p className="text-sm text-muted-foreground">{item.description}</p>}
         {dt && <p className="text-sm font-semibold">{dt}</p>}
-        {logged ? <p className="text-xl font-bold text-primary">{brl(price)}</p> : <p className="text-sm">Faça login ou crie sua conta para visualizar o preço.</p>}
+        {logged && variants.length > 0 && <div><Label>Variação</Label><Select value={variantId} onValueChange={setVariantId}><SelectTrigger aria-label="Variação"><SelectValue placeholder="Selecione a variação" /></SelectTrigger><SelectContent>{variants.map(v => <SelectItem key={v.id} value={v.id}>{v.name} — {brl(v.price_cents)}</SelectItem>)}</SelectContent></Select></div>}
+        {logged ? <p className="text-xl font-bold text-primary">{!ready ? "Carregando preço..." : actualPrice === null ? "Selecione uma variação" : brl(actualPrice)}</p> : <p className="text-sm">Faça login ou crie sua conta para visualizar o preço.</p>}
         {!item.schedulable && (
           <div><Label>Quantidade</Label><Input type="number" min={1} value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} /></div>
         )}
@@ -173,7 +185,7 @@ const AddDialog = ({ item, price, logged, holidays, onClose }: { item: Item; pri
             <Textarea value={notes} maxLength={1000} onChange={(e) => setNotes(e.target.value)} />
           </div>
         )}
-        <Button onClick={add} className="w-full">{logged ? "Adicionar ao carrinho" : "Entrar para comprar"}</Button>
+        <Button onClick={add} disabled={logged && (!ready || actualPrice === null)} className="w-full">{logged ? "Adicionar ao carrinho" : "Entrar para comprar"}</Button>
       </DialogContent>
     </Dialog>
   );

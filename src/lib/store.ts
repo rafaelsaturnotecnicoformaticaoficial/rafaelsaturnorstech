@@ -73,6 +73,7 @@ export const useSession = () => {
 export type CartItem = {
   key: string;
   item_id: string;
+  variant_id?: string;
   name: string;
   image_url: string | null;
   kind: string;

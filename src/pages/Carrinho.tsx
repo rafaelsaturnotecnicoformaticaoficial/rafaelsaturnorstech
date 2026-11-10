@@ -45,7 +45,7 @@ const Carrinho = () => {
       const { data, error } = await supabase.rpc("create_order", {
         payload: {
           ...f, delivery, payment_method: payment, notes, has_files: hasFiles,
-          items: cart.map((c) => ({ item_id: c.item_id, quantity: c.quantity, deadline_text: c.deadline_text, custom: c.custom || {}, date: c.date, time: c.time, appt_notes: c.appt_notes })),
+          items: cart.map((c) => ({ item_id: c.item_id, variant_id: c.variant_id, quantity: c.quantity, deadline_text: c.deadline_text, custom: c.custom || {}, date: c.date, time: c.time, appt_notes: c.appt_notes })),
         },
       });
       if (error) throw error;
