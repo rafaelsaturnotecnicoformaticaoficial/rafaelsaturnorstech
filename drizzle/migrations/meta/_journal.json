@@ -50,6 +50,13 @@
       "when": 1794312749452,
       "tag": "0006_catalog_item_variations",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794312837218,
+      "tag": "0007_restrict_variant_anonymous_grants",
+      "breakpoints": true
     }
   ]
 }
