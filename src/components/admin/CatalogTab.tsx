@@ -13,22 +13,25 @@ import { toast } from "sonner";
 import { brl } from "@/lib/store";
 import logo from "@/assets/logo.png";
 import type { TablesInsert } from "@/integrations/supabase/types";
+import { parseVariants, type VariantDraft } from "@/lib/variants";
 
 const blank = { id: "", name: "", description: "", image_url: "", kind: "produto", product_type: "fisico", category_id: "", price: "", stock: "", active: true, accepts_files: false, schedulable: false, deadline_type: "nenhum", deadline_days: "5", duration_minutes: "30", custom_fields: "", sort_order: "0" };
 export default function CatalogTab() {
   const qc = useQueryClient();
   const [form, setForm] = useState(blank);
+  const [variants, setVariants] = useState<VariantDraft[]>([]);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [categoryEdit, setCategoryEdit] = useState<string | null>(null);
   const { data, isLoading, error } = useQuery({ queryKey: ["admin_catalog"], queryFn: async () => {
-    const [items, prices, cats] = await Promise.all([supabase.from("catalog_items").select("*").order("name"), supabase.from("catalog_prices").select("*"), supabase.from("categories").select("*").order("sort_order")]);
+    const [items, prices, cats, variants] = await Promise.all([supabase.from("catalog_items").select("*").order("name"), supabase.from("catalog_prices").select("*"), supabase.from("categories").select("*").order("sort_order"), supabase.from("catalog_variants").select("*").order("sort_order")]);
     if (items.error) throw items.error; if (prices.error) throw prices.error; if (cats.error) throw cats.error;
-    return { items: items.data, prices: new Map(prices.data.map(p => [p.item_id, p.price_cents])), cats: cats.data };
+    if (variants.error) throw variants.error;
+    return { items: items.data, prices: new Map(prices.data.map(p => [p.item_id, p.price_cents])), cats: cats.data, variants: variants.data };
   }});
-  const refresh = () => { qc.invalidateQueries({ queryKey: ["admin_catalog"] }); qc.invalidateQueries({ queryKey: ["catalog_public"] }); qc.invalidateQueries({ queryKey: ["catalog_prices"] }); qc.invalidateQueries({ queryKey: ["categories"] }); };
+  const refresh = () => { qc.invalidateQueries({ queryKey: ["admin_catalog"] }); qc.invalidateQueries({ queryKey: ["catalog_public"] }); qc.invalidateQueries({ queryKey: ["catalog_prices"] }); qc.invalidateQueries({ queryKey: ["catalog_variants"] }); qc.invalidateQueries({ queryKey: ["categories"] }); };
   const field = (key: keyof typeof blank, label: string, type = "text") => <div><Label htmlFor={`catalog-${key}`}>{label}</Label><Input id={`catalog-${key}`} type={type} value={String(form[key])} onChange={e => setForm({ ...form, [key]: e.target.value })} /></div>;
   const select = (key: keyof typeof blank, label: string, values: [string, string][]) => <div><Label>{label}</Label><Select value={String(form[key]) || "none"} onValueChange={v => setForm({ ...form, [key]: v === "none" ? "" : v })}><SelectTrigger aria-label={label}><SelectValue /></SelectTrigger><SelectContent>{values.map(([v,l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}</SelectContent></Select></div>;
   const save = async () => {
@@ -38,11 +41,13 @@ export default function CatalogTab() {
     if (form.deadline_type === "personalizado" && Number(form.deadline_days) < 1) return toast.error("Informe um prazo válido.");
     setBusy(true);
     try {
+      const parsed = parseVariants(variants);
       const id = form.id || crypto.randomUUID();
       const row: TablesInsert<"catalog_items"> = { id, name: form.name.trim(), description: form.description || null, image_url: form.image_url || null, kind: form.kind, product_type: form.product_type, category_id: form.category_id || null, stock: form.stock === "" ? null : Number(form.stock), active: form.active, accepts_files: form.accepts_files, schedulable: form.schedulable, deadline_type: form.deadline_type, deadline_days: form.deadline_type === "personalizado" ? Number(form.deadline_days) : null, duration_minutes: form.schedulable ? Number(form.duration_minutes) || 30 : null, custom_fields: form.custom_fields.split(",").map(s => s.trim()).filter(Boolean), sort_order: Number(form.sort_order) || 0 };
       const result = await supabase.from("catalog_items").upsert(row); if (result.error) throw result.error;
       setForm(f => ({ ...f, id }));
       const priced = await supabase.from("catalog_prices").upsert({ item_id: id, price_cents: Math.round(price * 100) }); if (priced.error) throw priced.error;
+      const savedVariants = await supabase.rpc("save_catalog_variants", { _item_id: id, _variants: parsed }); if (savedVariants.error) throw savedVariants.error;
       refresh(); setOpen(false); toast.success("Item salvo!");
     } catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível salvar o item."); } finally { setBusy(false); }
   };
@@ -52,12 +57,12 @@ export default function CatalogTab() {
     if (error) toast.error(error.message); else { refresh(); toast.success("Item excluído."); }
   };
   return <div className="space-y-6">
-    <div className="flex flex-wrap gap-3 justify-between"><h2 className="text-xl font-bold">Produtos e Serviços</h2><Button onClick={() => { setForm(blank); setOpen(true); }}><Plus size={16} /> Novo item</Button></div>
+    <div className="flex flex-wrap gap-3 justify-between"><h2 className="text-xl font-bold">Produtos e Serviços</h2><Button onClick={() => { setForm(blank); setVariants([]); setOpen(true); }}><Plus size={16} /> Novo item</Button></div>
     <Input aria-label="Buscar no catálogo" placeholder="Buscar por nome" value={search} onChange={e => setSearch(e.target.value)} />
     {isLoading && <p>Carregando catálogo...</p>}{error && <p className="text-destructive">Não foi possível carregar o catálogo.</p>}
     <div className="grid md:grid-cols-2 gap-3">{data?.items.filter(i => i.name.toLowerCase().includes(search.toLowerCase())).map(i => <div key={i.id} className="border border-border rounded-lg p-3 flex gap-3 items-center bg-card">
       <img src={i.image_url || logo} alt={i.name} className="w-16 h-16 object-contain" /><div className="min-w-0 flex-1"><p className="font-bold break-words">{i.name}</p><p>{brl(data.prices.get(i.id) ?? 0)}</p><p className="text-sm text-muted-foreground">{i.kind === "servico" ? "Serviço" : "Produto"} · {i.active ? "Ativo" : "Inativo"}</p></div>
-      <Button variant="ghost" size="icon" aria-label={`Editar ${i.name}`} title="Editar" onClick={() => { setForm({ ...blank, ...i, id: i.id, description: i.description || "", image_url: i.image_url || "", category_id: i.category_id || "", price: ((data.prices.get(i.id) ?? 0) / 100).toFixed(2), stock: i.stock === null ? "" : String(i.stock), deadline_days: String(i.deadline_days ?? 5), duration_minutes: String(i.duration_minutes ?? 30), custom_fields: i.custom_fields.join(", "), sort_order: String(i.sort_order) }); setOpen(true); }}><Pencil size={16} /></Button>
+      <Button variant="ghost" size="icon" aria-label={`Editar ${i.name}`} title="Editar" onClick={() => { setVariants(data.variants.filter(v => v.item_id === i.id).map(v => ({ id: v.id, name: v.name, price: (v.price_cents / 100).toFixed(2) }))); setForm({ ...blank, ...i, id: i.id, description: i.description || "", image_url: i.image_url || "", category_id: i.category_id || "", price: ((data.prices.get(i.id) ?? 0) / 100).toFixed(2), stock: i.stock === null ? "" : String(i.stock), deadline_days: String(i.deadline_days ?? 5), duration_minutes: String(i.duration_minutes ?? 30), custom_fields: i.custom_fields.join(", "), sort_order: String(i.sort_order) }); setOpen(true); }}><Pencil size={16} /></Button>
       <Button variant="ghost" size="icon" aria-label={`Excluir ${i.name}`} title="Excluir" onClick={() => remove(i.id)}><Trash2 size={16} className="text-destructive" /></Button>
     </div>)}</div>
     {data?.items.length === 0 && <p className="text-muted-foreground">Nenhum item cadastrado.</p>}
@@ -76,7 +81,15 @@ export default function CatalogTab() {
         {select("deadline_type", "Prazo", [["nenhum","Sem prazo"],["5","5 dias úteis"],["10","10 dias úteis"],["personalizado","Personalizado"],["consulta","Sob consulta"]])}{form.deadline_type === "personalizado" && field("deadline_days", "Dias úteis", "number")}
         {field("duration_minutes", "Duração (minutos)", "number")}{field("sort_order", "Ordem de exibição", "number")}{field("custom_fields", "Campos personalizados (separados por vírgula)")}
         {([['active','Ativo'],['accepts_files','Aceita arquivos'],['schedulable','Permite agendamento']] as const).map(([k,l]) => <div key={k} className="flex justify-between items-center gap-2"><Label htmlFor={`catalog-${k}`}>{l}</Label><Switch id={`catalog-${k}`} checked={form[k]} onCheckedChange={v => setForm({ ...form,[k]:v })} /></div>)}
-      </div><Button disabled={busy} onClick={save}>{busy ? "Salvando..." : "Salvar item"}</Button>
+      </div>
+      <section className="border-t border-border pt-4 space-y-3">
+        <div className="flex justify-between items-center gap-2"><h3 className="font-bold">Variações</h3><Button variant="outline" size="sm" disabled={busy} onClick={() => setVariants(v => [...v, { id: crypto.randomUUID(), name: "", price: "" }])}><Plus size={16} /> Adicionar variação</Button></div>
+        {variants.map((v, index) => <div key={v.id} className="grid grid-cols-[1fr_110px_36px] gap-2 items-end">
+          <div><Label htmlFor={`variant-name-${v.id}`}>Nome da variação {index + 1}</Label><Input id={`variant-name-${v.id}`} maxLength={120} value={v.name} onChange={e => setVariants(all => all.map(x => x.id === v.id ? { ...x, name: e.target.value } : x))} /></div>
+          <div><Label htmlFor={`variant-price-${v.id}`}>Preço (R$)</Label><Input id={`variant-price-${v.id}`} inputMode="decimal" value={v.price} onChange={e => setVariants(all => all.map(x => x.id === v.id ? { ...x, price: e.target.value } : x))} /></div>
+          <Button variant="ghost" size="icon" disabled={busy} aria-label={`Remover variação ${index + 1}`} title="Remover variação" onClick={() => setVariants(all => all.filter(x => x.id !== v.id))}><Trash2 size={16} /></Button>
+        </div>)}
+      </section><Button disabled={busy} onClick={save}>{busy ? "Salvando..." : "Salvar item"}</Button>
     </DialogContent></Dialog>
   </div>;
 }

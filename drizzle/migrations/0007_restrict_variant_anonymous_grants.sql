@@ -1,0 +1,1 @@
+REVOKE ALL ON public.catalog_variants FROM anon;
