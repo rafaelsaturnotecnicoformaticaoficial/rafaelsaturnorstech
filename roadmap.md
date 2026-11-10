@@ -5,6 +5,6 @@
 - [x] Verify public display, authenticated customer save/readback, profile removal, and live visit count updates.
 
 # Item variations
-- [ ] Add protected variation prices and validate the selected option when creating orders.
-- [ ] Add variation editing in admin and selection in the catalog, cart and orders.
-- [ ] Test saving, selecting and ordering variations with different prices.
+- [x] Add protected variation prices and validate the selected option when creating orders.
+- [x] Add variation editing in admin and selection in the catalog, cart and orders.
+- [x] Test saving, selecting and ordering variations with different prices.
