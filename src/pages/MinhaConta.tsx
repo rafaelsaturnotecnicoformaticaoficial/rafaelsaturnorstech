@@ -12,6 +12,13 @@ import { brl, orderNumber, ORDER_STATUS, APPT_STATUS } from "@/lib/store";
 
 type P = { full_name: string; whatsapp: string; address: string; city: string; state: string };
 
+const channels = [
+  { label: "Canal de ofertas no WhatsApp", href: "https://whatsapp.com/channel/0029Va53o6XAInPjFxf1g106" },
+  { label: "Canal de atendimento no WhatsApp", href: "https://whatsapp.com/channel/0029VaAGIyyIN9irQcAaRp0C" },
+  { label: "Instagram", href: "https://www.instagram.com/rstecnicoinformaticaoficial/" },
+  { label: "Facebook", href: "https://www.facebook.com/rstecnicoinformaticaoficial" },
+];
+
 const MinhaConta = () => {
   const nav = useNavigate();
   const [uid, setUid] = useState<string | null>(null);
@@ -93,6 +100,23 @@ const MinhaConta = () => {
             <p>Indique amigos: eles ganham <b>5% de desconto</b> na primeira compra e você ganha <b>5% de desconto</b> no próximo pedido quando o pedido deles for concluído. Um desconto por pedido.</p>
             {code && <div className="flex gap-2"><Input readOnly value={`${window.location.origin}/r/${code}`} aria-label="Seu link de indicação" /><Button onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/r/${code}`); toast.success("Link copiado."); }}>Copiar</Button></div>}
             <p className="text-sm text-muted-foreground">Descontos disponíveis: <b>{rewards.filter((r) => !r.used_order_id).length}</b> · Já usados: {rewards.filter((r) => r.used_order_id).length}</p>
+            <div className="pt-4 border-t">
+              <h3 className="font-display text-lg font-bold mb-1">Siga nossos canais e redes</h3>
+              <p className="text-sm text-muted-foreground mb-3">Ofertas, promoções e novidades direto no seu WhatsApp e nas nossas redes.</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {channels.map((c) => (
+                  <a
+                    key={c.href}
+                    href={c.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold hover:text-primary hover:border-primary/40 transition-colors"
+                  >
+                    {c.label}
+                  </a>
+                ))}
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </main>
