@@ -1,18 +1,20 @@
-import { CreditCard, Smartphone, Banknote } from "lucide-react";
+import { CreditCard, Smartphone, Banknote, Wallet } from "lucide-react";
 
 const methods = [
   { icon: Banknote, label: "Débito" },
   { icon: CreditCard, label: "Crédito" },
   { icon: Smartphone, label: "Pix" },
+  { icon: Wallet, label: "Dinheiro" },
 ];
 
 const Payment = () => {
   return (
     <section className="py-16 bg-muted">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="font-display text-2xl md:text-3xl font-bold mb-8">
+        <h2 className="font-display text-2xl md:text-3xl font-bold mb-4">
           Formas de <span className="text-gradient">Pagamento</span>
         </h2>
+        <p className="font-semibold text-foreground mb-8">50% de entrada + 50% na entrega</p>
         <div className="flex flex-wrap justify-center gap-6">
           {methods.map((m) => (
             <div
