@@ -17,6 +17,8 @@ const MinhaConta = () => {
   const [uid, setUid] = useState<string | null>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [appts, setAppts] = useState<any[]>([]);
+  const [code, setCode] = useState("");
+  const [rewards, setRewards] = useState<{ used_order_id: string | null }[]>([]);
   const [p, setP] = useState<P>({ full_name: "", whatsapp: "", address: "", city: "", state: "" });
 
   useEffect(() => {
@@ -25,11 +27,13 @@ const MinhaConta = () => {
       const id = data.user.id;
       setUid(id);
       const [o, a, pr] = await Promise.all([
-        supabase.from("orders").select("id,number,status,subtotal_cents,created_at").eq("user_id", id).order("created_at", { ascending: false }),
+        supabase.from("orders").select("id,number,status,subtotal_cents,discount_cents,created_at").eq("user_id", id).order("created_at", { ascending: false }),
         supabase.from("appointments").select("id,service_name,slot_date,slot_time,status").eq("user_id", id).order("slot_date", { ascending: false }),
         supabase.from("profiles").select("full_name,whatsapp,address,city,state").eq("user_id", id).maybeSingle(),
       ]);
       setOrders(o.data || []);
+      supabase.rpc("my_referral_code").then(({ data }) => data && setCode(data));
+      supabase.from("referral_rewards").select("used_order_id").eq("user_id", id).then(({ data }) => setRewards(data || []));
       setAppts(a.data || []);
       if (pr.data) setP({ full_name: pr.data.full_name || "", whatsapp: pr.data.whatsapp || "", address: (pr.data as any).address || "", city: pr.data.city || "", state: pr.data.state || "" });
     });
@@ -56,13 +60,14 @@ const MinhaConta = () => {
             <TabsTrigger value="pedidos">Meus Pedidos</TabsTrigger>
             <TabsTrigger value="agendamentos">Meus Agendamentos</TabsTrigger>
             <TabsTrigger value="dados">Meus Dados</TabsTrigger>
+            <TabsTrigger value="indicacao">Indique e Ganhe</TabsTrigger>
           </TabsList>
           <TabsContent value="pedidos" className="space-y-2">
             {orders.length === 0 && <p className="text-muted-foreground">Nenhum pedido ainda.</p>}
             {orders.map((o) => (
               <div key={o.id} className="border rounded-lg p-3 flex justify-between">
                 <div><b>{orderNumber(o.number)}</b> · {new Date(o.created_at).toLocaleDateString("pt-BR")}</div>
-                <div className="text-right"><div>{brl(o.subtotal_cents)}</div><div className="text-sm text-muted-foreground">{ORDER_STATUS[o.status] || o.status}</div></div>
+                <div className="text-right"><div>{brl(o.subtotal_cents)}</div>{o.discount_cents > 0 && <div className="text-xs text-success">Desconto {brl(o.discount_cents)}</div>}<div className="text-sm text-muted-foreground">{ORDER_STATUS[o.status] || o.status}</div></div>
               </div>
             ))}
           </TabsContent>
@@ -83,6 +88,11 @@ const MinhaConta = () => {
               </div>
             ))}
             <Button onClick={save}>Salvar</Button>
+          </TabsContent>
+          <TabsContent value="indicacao" className="space-y-3">
+            <p>Indique amigos: eles ganham <b>5% de desconto</b> na primeira compra e você ganha <b>5% de desconto</b> no próximo pedido quando o pedido deles for concluído. Um desconto por pedido.</p>
+            {code && <div className="flex gap-2"><Input readOnly value={`${window.location.origin}/r/${code}`} aria-label="Seu link de indicação" /><Button onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/r/${code}`); toast.success("Link copiado."); }}>Copiar</Button></div>}
+            <p className="text-sm text-muted-foreground">Descontos disponíveis: <b>{rewards.filter((r) => !r.used_order_id).length}</b> · Já usados: {rewards.filter((r) => r.used_order_id).length}</p>
           </TabsContent>
         </Tabs>
       </main>

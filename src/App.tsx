@@ -1,5 +1,6 @@
 import MinhaConta from "@/pages/MinhaConta";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ReferralCapture, { ReferralLanding } from "@/components/ReferralCapture";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -31,8 +32,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <SiteVisitTracker />
+        <ReferralCapture />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/r/:code" element={<ReferralLanding />} />
           <Route path="/loja" element={<Loja />} />
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/produtos" element={<Produtos />} />

@@ -22,6 +22,9 @@ const Carrinho = () => {
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
   const total = cart.reduce((s, c) => s + c.price_cents * c.quantity, 0);
+  const [pct, setPct] = useState(0);
+  const discount = Math.round(total * pct / 100);
+  useEffect(() => { if (user) supabase.rpc("my_discount").then(({ data }) => setPct(Number((data as { percent?: number })?.percent) || 0)); }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -49,7 +52,9 @@ const Carrinho = () => {
         },
       });
       if (error) throw error;
-      const o = data as { id: string; number: number; subtotal_cents: number };
+      const o = data as { id: string; number: number; subtotal_cents: number; discount_cents?: number };
+      const fresh = await supabase.from("orders").select("subtotal_cents,discount_cents").eq("id", o.id).maybeSingle();
+      if (fresh.data) { o.subtotal_cents = fresh.data.subtotal_cents; o.discount_cents = fresh.data.discount_cents; }
       for (const c of cart) for (const file of c.files || []) {
         const path = `${user.id}/${o.id}/${crypto.randomUUID()}.${file.name.split(".").pop()?.toLowerCase()}`;
         const up = await supabase.storage.from("order-files").upload(path, file);
@@ -63,7 +68,7 @@ const Carrinho = () => {
         Object.entries(c.custom || {}).forEach(([k, v]) => v && (l += `\n  ${k}: ${v}`));
         return l;
       }).join("\n");
-      const msg = `*Pedido ${orderNumber(o.number)} — RS Tech*\n\nCliente: ${f.name}\nWhatsApp: ${f.whatsapp}\nCidade: ${f.city} ${f.state}\n\n${lines}\n\nSubtotal: ${brl(o.subtotal_cents)}\nRecebimento: ${delivery === "retirada" ? `Retirada em ${PICKUP_CITY}` : "Outra cidade (consultar frete)"}\nPagamento: ${PAYMENT[payment]}${hasFiles ? "\nArquivos enviados pelo site." : ""}${notes ? `\nObs: ${notes}` : ""}`;
+      const msg = `*Pedido ${orderNumber(o.number)} — RS Tech*\n\nCliente: ${f.name}\nWhatsApp: ${f.whatsapp}\nCidade: ${f.city} ${f.state}\n\n${lines}${o.discount_cents ? `\n\nDesconto indicação (5%): -${brl(o.discount_cents)}` : ""}\n\nTotal: ${brl(o.subtotal_cents)}\nRecebimento: ${delivery === "retirada" ? `Retirada em ${PICKUP_CITY}` : "Outra cidade (consultar frete)"}\nPagamento: ${PAYMENT[payment]}${hasFiles ? "\nArquivos enviados pelo site." : ""}${notes ? `\nObs: ${notes}` : ""}`;
       const url = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(msg)}`;
       if (w) w.location.href = url; else window.location.href = url;
       cartStore.clear();
@@ -108,6 +113,7 @@ const Carrinho = () => {
             </div>
             <div className="bg-card border border-border rounded-xl p-4 space-y-3 h-fit">
               <p className="flex justify-between font-bold text-lg"><span>Subtotal</span><span>{brl(total)}</span></p>
+              {discount > 0 && <><p className="flex justify-between text-success"><span>Desconto indicação (5%)</span><span>-{brl(discount)}</span></p><p className="flex justify-between font-bold text-lg"><span>Total</span><span>{brl(total - discount)}</span></p></>}
               {loading ? null : !user ? (
                 <div className="space-y-2">
                   <p className="text-sm">Entre na sua conta para finalizar o pedido.</p>

@@ -57,6 +57,13 @@
       "when": 1794312837218,
       "tag": "0007_restrict_variant_anonymous_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794406257659,
+      "tag": "0008_referral_discounts",
+      "breakpoints": true
     }
   ]
 }

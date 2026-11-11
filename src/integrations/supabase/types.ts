@@ -635,6 +635,8 @@ export type Database = {
           customer_name: string
           customer_whatsapp: string
           delivery: string
+          discount_cents: number
+          discount_reason: string | null
           has_files: boolean
           id: string
           notes: string | null
@@ -653,6 +655,8 @@ export type Database = {
           customer_name: string
           customer_whatsapp: string
           delivery?: string
+          discount_cents?: number
+          discount_reason?: string | null
           has_files?: boolean
           id?: string
           notes?: string | null
@@ -671,6 +675,8 @@ export type Database = {
           customer_name?: string
           customer_whatsapp?: string
           delivery?: string
+          discount_cents?: number
+          discount_reason?: string | null
           has_files?: boolean
           id?: string
           notes?: string | null
@@ -833,6 +839,48 @@ export type Database = {
           whatsapp?: string | null
         }
         Relationships: []
+      }
+      referral_rewards: {
+        Row: {
+          created_at: string
+          id: string
+          referred_user_id: string
+          source_order_id: string | null
+          used_order_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referred_user_id: string
+          source_order_id?: string | null
+          used_order_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referred_user_id?: string
+          source_order_id?: string | null
+          used_order_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_rewards_source_order_id_fkey"
+            columns: ["source_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_rewards_used_order_id_fkey"
+            columns: ["used_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shop_order_items: {
         Row: {
@@ -1109,6 +1157,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_referral_code: { Args: { _code: string }; Returns: boolean }
       create_order: { Args: { payload: Json }; Returns: Json }
       delete_customer_profile: {
         Args: { _profile_id: string }
@@ -1124,6 +1173,8 @@ export type Database = {
       }
       increment_affiliate_click: { Args: { _code: string }; Returns: undefined }
       management_report: { Args: { _from: string; _to: string }; Returns: Json }
+      my_discount: { Args: never; Returns: Json }
+      my_referral_code: { Args: never; Returns: string }
       record_site_visit: {
         Args: { _path: string; _session: string; _view?: boolean }
         Returns: undefined
